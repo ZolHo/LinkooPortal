@@ -11,6 +11,7 @@
 #include "Kismet/GameplayStatics.h"
 #include "MotionControllerComponent.h"
 #include "XRMotionControllerBase.h" // for FXRMotionControllerBase::RightHandSourceId
+#include "Kismet/KismetMathLibrary.h"
 
 DEFINE_LOG_CATEGORY_STATIC(LogFPChar, Warning, All);
 
@@ -195,39 +196,48 @@ void ALinkooPortalCharacter::CrabObject()
 
 void ALinkooPortalCharacter::fire(EPortalDoorType dtype)
 {
-	if (ProjectileClass != nullptr)
+
+	if (!bIsGrabObj)
 	{
-		UWorld* const World = GetWorld();
-		if (World != nullptr)
-		{
-			const FRotator SpawnRotation = GetControlRotation();
-			// MuzzleOffset is in camera space, so transform it to world space before offsetting from the character location to find the final muzzle position
-			const FVector SpawnLocation = ((FP_MuzzleLocation != nullptr) ? FP_MuzzleLocation->GetComponentLocation() : GetActorLocation()) + SpawnRotation.RotateVector(GunOffset);
-
-			//Set Spawn Collision Handling Override
-			FActorSpawnParameters ActorSpawnParams;
-			ActorSpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButDontSpawnIfColliding;
-
-			// spawn the projectile at the muzzle
-			World->SpawnActor<ALinkooPortalProjectile>(ProjectileClass, SpawnLocation, SpawnRotation, ActorSpawnParams);
+		FVector EndLocation;
+		FVector CameraForwardVector = UKismetMathLibrary::GetForwardVector(GetFirstPersonCameraComponent()->GetComponentRotation());
+		TArray<AActor*> IgnoreActors;
+		IgnoreActors.Add(this);
+		FHitResult HitResult;
 		
-		}
-	}
+		EndLocation = GetFirstPersonCameraComponent()->GetComponentLocation() + 100000*CameraForwardVector;
 
-	// try and play the sound if specified
-	if (FireSound != nullptr)
-	{
-		UGameplayStatics::PlaySoundAtLocation(this, FireSound, GetActorLocation());
-	}
+		bool HitSuccess = UKismetSystemLibrary::LineTraceSingle(this, GetFirstPersonCameraComponent()->GetComponentLocation(), EndLocation, ETraceTypeQuery::TraceTypeQuery1, false,
+			IgnoreActors, EDrawDebugTrace::ForDuration, HitResult, true, FLinearColor::Red, FLinearColor::Green, 5.f);
 
-	// try and play a firing animation if specified
-	if (FireAnimation != nullptr)
-	{
-		// Get the animation object for the arms mesh
-		UAnimInstance* AnimInstance = Mesh1P->GetAnimInstance();
-		if (AnimInstance != nullptr)
+		if (HitSuccess)
 		{
-			AnimInstance->Montage_Play(FireAnimation, 1.f);
+			FTransform SpawnTransform;
+			FRotator SpawnRotator = UKismetMathLibrary::MakeRotFromX(HitResult.Normal);
+			SpawnTransform.SetLocation(HitResult.Location + 1.0 * HitResult.Normal);
+			SpawnTransform.SetRotation(SpawnRotator.Quaternion());
+
+			FPortalDoorManager::Get().SpawnOrActiveDoor(dtype, &SpawnTransform, this);
 		}
+	
+		// try and play the sound if specified
+		if (FireSound != nullptr)
+		{
+			UGameplayStatics::PlaySoundAtLocation(this, FireSound, GetActorLocation());
+		}
+
+		// try and play a firing animation if specified
+		if (FireAnimation != nullptr)
+		{
+			// Get the animation object for the arms mesh
+			UAnimInstance* AnimInstance = Mesh1P->GetAnimInstance();
+			if (AnimInstance != nullptr)
+			{
+				AnimInstance->Montage_Play(FireAnimation, 1.f);
+			}
+		}
+	} else
+	{
+		// TODO: 持有东西时开枪应当发出操作失败的效果
 	}
 }

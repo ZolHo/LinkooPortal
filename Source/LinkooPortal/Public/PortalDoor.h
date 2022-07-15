@@ -12,7 +12,6 @@ UENUM()
 // 传送门种类
 enum EPortalDoorType { Red,Blue };
 
-class FPortalDoorManager;
 
 UCLASS()
 class LINKOOPORTAL_API APortalDoor : public AActor
@@ -73,5 +72,23 @@ private:
 	
 	APortalDoor* TheOtherDoor;
 	
-	bool ActiveState = false;
+	bool ActiveState = true;
+};
+
+
+class FPortalDoorManager
+{
+public:
+	APortalDoor* BlueDoor;
+	APortalDoor* RedDoor;
+
+public:
+	// 生成传送门，如果内存中存在，则用激活它代替生成
+	bool SpawnOrActiveDoor(EPortalDoorType dtype, FTransform* spawnTransform, AActor* const caller);
+	
+	static FPortalDoorManager& Get();
+private:
+	UWorld* NowWorld;
+
+	void ResetManager();
 };

@@ -6,47 +6,7 @@
 #include "Kismet/GameplayStatics.h"
 #include "LinkooPortal/LinkooPortalGameMode.h"
 
-class FPortalDoorManager
-{
-public:
-	APortalDoor* BlueDoor;
-	APortalDoor* RedDoor;
 
-public:
-
-	// 生成传送门，如果内存中存在，则用激活它代替生成
-	bool SpawnOrActiveDoor(EPortalDoorType dtype, FTransform* spawnTransform, AActor* const caller)
-	{
-		// 利用指针的指针指向这次要操作的是红门还是蓝门
-		APortalDoor** dealDoor;
-		if (dtype == EPortalDoorType::Blue) dealDoor = &BlueDoor;
-		else dealDoor = &RedDoor;
-		
-		check(dealDoor);
-		
-		if(IsValid(*dealDoor))
-		{
-			(*dealDoor)->SetActorTransform(*spawnTransform);
-			(*dealDoor)->SetDoorActive(true);
-		}
-		else
-		{
-			// 创建新的传送门
-			auto door = Cast<APortalDoor>(UGameplayStatics::BeginDeferredActorSpawnFromClass(caller, APortalDoor::StaticClass(), *spawnTransform));
-			door->InitDoor(dtype);
-			(*dealDoor) = door;
-			UGameplayStatics::FinishSpawningActor(door, *spawnTransform);
-		}
-		
-	}
-	
-	static FPortalDoorManager& Get()
-	{
-		static FPortalDoorManager Singleton;
-		return Singleton;
-	}
-
-};
 
 // Sets default values
 APortalDoor::APortalDoor()
@@ -66,6 +26,7 @@ APortalDoor::APortalDoor()
 		DoorFrameMesh->SetStaticMesh(MeshAssert.Object);
 	}
 	DoorFrameMesh->SetRelativeScale3D(FVector(0.1, 2.0, 2.0));
+	DoorFrameMesh->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
 
 	DoorFaceMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("DoorFace"));
 	DoorFaceMesh->SetupAttachment(RootComponent);
@@ -76,6 +37,7 @@ APortalDoor::APortalDoor()
 	}
 	DoorFaceMesh->SetRelativeScale3D(FVector(2.5, 1.5, 1.0));
 	DoorFaceMesh->SetRelativeRotation(FRotator(270.0, 0.0, 0.0));
+	DoorFaceMesh->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
 	
 	DoorCollision = CreateDefaultSubobject<UBoxComponent>(TEXT("DoorCollision"));
 	DoorCollision->SetupAttachment(DoorFaceMesh);
@@ -97,11 +59,11 @@ void APortalDoor::InitDoor(EPortalDoorType dtype)
 	if (dtype == EPortalDoorType::Blue)
 	{
 		static ConstructorHelpers::FObjectFinder<UMaterial> MaterialAssert(TEXT("Material'/Game/MaterialSource/MyMaterials/M_Frame_Blue.M_Frame_Blue'"));
-		DoorFrameMesh->SetMaterial(0, MaterialAssert.Object);
+		if(MaterialAssert.Succeeded()) DoorFrameMesh->SetMaterial(0, MaterialAssert.Object);
 	} else
 	{
 		static ConstructorHelpers::FObjectFinder<UMaterial> MaterialAssert(TEXT("Material'/Game/MaterialSource/MyMaterials/M_Frame_Red.M_Frame_Red'"));
-		DoorFrameMesh->SetMaterial(0, MaterialAssert.Object);
+		if(MaterialAssert.Succeeded()) DoorFrameMesh->SetMaterial(0, MaterialAssert.Object);
 	}
 
 }
@@ -135,7 +97,7 @@ void APortalDoor::SetDoorActive(bool state)
 {
 	if (state == ActiveState) return;
 	
-	if (state)
+	if (!state)
 	{
 		SetActorHiddenInGame(true);
 		SetActorEnableCollision(false);
@@ -148,3 +110,50 @@ void APortalDoor::SetDoorActive(bool state)
 	}
 	ActiveState = state;
 }
+
+
+/******                    定义Manager方法 START                             ******/
+FPortalDoorManager& FPortalDoorManager::Get()
+{
+	{
+		static FPortalDoorManager Singleton;
+		return Singleton;
+	}
+}
+
+
+void FPortalDoorManager::ResetManager()
+{
+	BlueDoor = nullptr;
+	RedDoor = nullptr;
+}
+
+bool FPortalDoorManager::SpawnOrActiveDoor(EPortalDoorType dtype, FTransform* spawnTransform, AActor* const caller)
+{
+	// 利用指针的指针指向这次要操作的是红门还是蓝门
+	APortalDoor** dealDoor;
+	if (dtype == EPortalDoorType::Blue) dealDoor = &BlueDoor;
+	else dealDoor = &RedDoor;
+
+	if (!NowWorld || caller->GetWorld() != NowWorld) ResetManager();
+	NowWorld = caller->GetWorld();
+	
+	if(IsValid(*dealDoor))
+	{
+		(*dealDoor)->SetDoorActive(true);
+		(*dealDoor)->SetActorTransform(*spawnTransform);
+	}
+	else
+	{
+		// 创建新的传送门
+		auto door = Cast<APortalDoor>(UGameplayStatics::BeginDeferredActorSpawnFromClass(caller, APortalDoor::StaticClass(), *spawnTransform));
+		door->InitDoor(dtype);
+		(*dealDoor) = door;
+		UGameplayStatics::FinishSpawningActor(door, *spawnTransform);
+	}
+
+	// TODO: 完善条件判断
+	return true;
+}
+
+/******                    定义Manager方法 END                             ******/

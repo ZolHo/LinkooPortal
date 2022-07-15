@@ -72,6 +72,11 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Gameplay)
 	uint8 bUsingMotionControllers : 1;
 
+public:
+
+	// 是否抓着东西
+	bool bIsGrabObj = false;
+	
 protected:
 
 	// 左键蓝门
@@ -83,7 +88,6 @@ protected:
 	// 拾取
 	void CrabObject();
 	
-
 	/** Handles moving forward/backward */
 	void MoveForward(float Val);
 
@@ -102,6 +106,8 @@ protected:
 	 */
 	void LookUpAtRate(float Rate);
 
+	// 真正的开传送枪
+	void fire(EPortalDoorType dtype);
 	
 protected:
 	// APawn interface
@@ -112,9 +118,6 @@ public:
 	USkeletalMeshComponent* GetMesh1P() const { return Mesh1P; }
 	/** Returns FirstPersonCameraComponent subobject **/
 	UCameraComponent* GetFirstPersonCameraComponent() const { return FirstPersonCameraComponent; }
-
-private:
-	void fire(EPortalDoorType dtype);
-
+	
 };
 
