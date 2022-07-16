@@ -31,6 +31,12 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category=Mesh)
 	UStaticMeshComponent* DoorFrameMesh;
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category=Materia)
+	UMaterialInterface* DoorFrameMaterialBlue;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category=Materia)
+	UMaterialInterface* DoorFrameMaterialRed;
+	
 	// 门面
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category=Mesh)
 	UStaticMeshComponent* DoorFaceMesh;
@@ -39,22 +45,19 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category=Collision)
 	UBoxComponent* DoorCollision;
 
-	// 显示另一个传送门中摄像机的场景
+	// 捕获的场景
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category=View)
-	USceneCaptureComponent2D* PortalView;
-
-	// 摄像机，渲染到另一个传送门上
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category=View)
-	UCameraComponent* ViewCamera;
-	
+	USceneCaptureComponent2D* PortalViewCapture;
 
 public:
 
 	// 获取另一扇传送门，可能返回null
 	const APortalDoor* GetTheOtherPortal();
 
+	// 获取传送门是否显示在游戏中的Active状态
 	bool GetDoorActive() const;
 
+	// 传送门在游戏中不销毁，而是切换Active状态隐藏起来
 	void SetDoorActive(bool state);
 
 protected:
@@ -69,13 +72,16 @@ public:
 	virtual void Tick(float DeltaTime) override;
 
 private:
-	
+
+	// 获取对应的另一扇传送门
 	APortalDoor* TheOtherDoor;
-	
+
+	// 激活状态，true为在游戏中显示， false反之
 	bool ActiveState = true;
 };
 
 
+// 门管
 class FPortalDoorManager
 {
 public:
@@ -87,8 +93,12 @@ public:
 	bool SpawnOrActiveDoor(EPortalDoorType dtype, FTransform* spawnTransform, AActor* const caller);
 	
 	static FPortalDoorManager& Get();
+
+	// 更新场景捕获组件的位置
+	void UpdateViewTarget();
 private:
 	UWorld* NowWorld;
 
+	// 清除Manager管理的门，因为Manager的生命周期大于World，所有切换world时候需要reset
 	void ResetManager();
 };

@@ -101,55 +101,6 @@ void ALinkooPortalCharacter::SetupPlayerInputComponent(class UInputComponent* Pl
 	PlayerInputComponent->BindAxis("LookUpRate", this, &ALinkooPortalCharacter::LookUpAtRate);
 }
 
-// void ALinkooPortalCharacter::OnFire()
-// {
-// 	// try and fire a projectile
-// 	if (ProjectileClass != nullptr)
-// 	{
-// 		UWorld* const World = GetWorld();
-// 		if (World != nullptr)
-// 		{
-// 			if (bUsingMotionControllers)
-// 			{
-// 				const FRotator SpawnRotation = VR_MuzzleLocation->GetComponentRotation();
-// 				const FVector SpawnLocation = VR_MuzzleLocation->GetComponentLocation();
-// 				World->SpawnActor<ALinkooPortalProjectile>(ProjectileClass, SpawnLocation, SpawnRotation);
-// 			}
-// 			else
-// 			{
-// 				const FRotator SpawnRotation = GetControlRotation();
-// 				// MuzzleOffset is in camera space, so transform it to world space before offsetting from the character location to find the final muzzle position
-// 				const FVector SpawnLocation = ((FP_MuzzleLocation != nullptr) ? FP_MuzzleLocation->GetComponentLocation() : GetActorLocation()) + SpawnRotation.RotateVector(GunOffset);
-//
-// 				//Set Spawn Collision Handling Override
-// 				FActorSpawnParameters ActorSpawnParams;
-// 				ActorSpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButDontSpawnIfColliding;
-//
-// 				// spawn the projectile at the muzzle
-// 				World->SpawnActor<ALinkooPortalProjectile>(ProjectileClass, SpawnLocation, SpawnRotation, ActorSpawnParams);
-// 			}
-// 		}
-// 	}
-//
-// 	// try and play the sound if specified
-// 	if (FireSound != nullptr)
-// 	{
-// 		UGameplayStatics::PlaySoundAtLocation(this, FireSound, GetActorLocation());
-// 	}
-//
-// 	// try and play a firing animation if specified
-// 	if (FireAnimation != nullptr)
-// 	{
-// 		// Get the animation object for the arms mesh
-// 		UAnimInstance* AnimInstance = Mesh1P->GetAnimInstance();
-// 		if (AnimInstance != nullptr)
-// 		{
-// 			AnimInstance->Montage_Play(FireAnimation, 1.f);
-// 		}
-// 	}
-// }
-
-
 void ALinkooPortalCharacter::MoveForward(float Value)
 {
 	if (Value != 0.0f)
@@ -199,22 +150,29 @@ void ALinkooPortalCharacter::fire(EPortalDoorType dtype)
 
 	if (!bIsGrabObj)
 	{
+		FVector StartLocation;
 		FVector EndLocation;
 		FVector CameraForwardVector = UKismetMathLibrary::GetForwardVector(GetFirstPersonCameraComponent()->GetComponentRotation());
+		StartLocation = GetFirstPersonCameraComponent()->GetComponentLocation();
+		// Ignore Array
 		TArray<AActor*> IgnoreActors;
 		IgnoreActors.Add(this);
+		auto PDM = FPortalDoorManager::Get();
+		if (PDM.BlueDoor) IgnoreActors.Add(PDM.BlueDoor);
+		if (PDM.RedDoor) IgnoreActors.Add(PDM.RedDoor);
+		
 		FHitResult HitResult;
 		
-		EndLocation = GetFirstPersonCameraComponent()->GetComponentLocation() + 100000*CameraForwardVector;
+		EndLocation = StartLocation + 100000*CameraForwardVector;
 
-		bool HitSuccess = UKismetSystemLibrary::LineTraceSingle(this, GetFirstPersonCameraComponent()->GetComponentLocation(), EndLocation, ETraceTypeQuery::TraceTypeQuery1, false,
+		bool HitSuccess = UKismetSystemLibrary::LineTraceSingle(this, StartLocation, EndLocation, ETraceTypeQuery::TraceTypeQuery1, false,
 			IgnoreActors, EDrawDebugTrace::ForDuration, HitResult, true, FLinearColor::Red, FLinearColor::Green, 5.f);
 
 		if (HitSuccess)
 		{
 			FTransform SpawnTransform;
-			FRotator SpawnRotator = UKismetMathLibrary::MakeRotFromX(HitResult.Normal);
-			SpawnTransform.SetLocation(HitResult.Location + 1.0 * HitResult.Normal);
+			FRotator SpawnRotator = UKismetMathLibrary::MakeRotFromXY(HitResult.Normal, FVector::CrossProduct(FVector(0, 0, 1) ,StartLocation-HitResult.Location));
+			SpawnTransform.SetLocation(HitResult.Location + 1 * HitResult.Normal);
 			SpawnTransform.SetRotation(SpawnRotator.Quaternion());
 
 			FPortalDoorManager::Get().SpawnOrActiveDoor(dtype, &SpawnTransform, this);

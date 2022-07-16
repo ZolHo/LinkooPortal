@@ -3,6 +3,8 @@
 
 #include "PortalDoor.h"
 
+#include "Components/SceneCaptureComponent2D.h"
+#include "Engine/TextureRenderTarget2D.h"
 #include "Kismet/GameplayStatics.h"
 #include "LinkooPortal/LinkooPortalGameMode.h"
 
@@ -25,7 +27,7 @@ APortalDoor::APortalDoor()
 	{
 		DoorFrameMesh->SetStaticMesh(MeshAssert.Object);
 	}
-	DoorFrameMesh->SetRelativeScale3D(FVector(0.1, 2.0, 2.0));
+	DoorFrameMesh->SetRelativeScale3D(FVector(0.01, 2.0, 2.0));
 	DoorFrameMesh->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
 
 	DoorFaceMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("DoorFace"));
@@ -35,15 +37,23 @@ APortalDoor::APortalDoor()
 	{
 		DoorFaceMesh->SetStaticMesh(MeshAssert2.Object);
 	}
-	DoorFaceMesh->SetRelativeScale3D(FVector(2.5, 1.5, 1.0));
+	DoorFaceMesh->SetRelativeScale3D(FVector(2.5, 1.5, 0.01));
 	DoorFaceMesh->SetRelativeRotation(FRotator(270.0, 0.0, 0.0));
 	DoorFaceMesh->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
 	
 	DoorCollision = CreateDefaultSubobject<UBoxComponent>(TEXT("DoorCollision"));
 	DoorCollision->SetupAttachment(DoorFaceMesh);
 	DoorCollision->SetRelativeScale3D(FVector(1.5, 1.5, 0.1));
+
+	PortalViewCapture = CreateDefaultSubobject<USceneCaptureComponent2D>(TEXT("ViewCapture"));
 	
 	/******                    初始化组件 END                             ******/
+
+	static ConstructorHelpers::FObjectFinder<UMaterialInterface> MaterialAssert(TEXT("Material'/Game/MaterialSource/MyMaterials/M_Frame_Blue.M_Frame_Blue'"));
+	DoorFrameMaterialBlue = MaterialAssert.Object;
+	static ConstructorHelpers::FObjectFinder<UMaterialInterface> MaterialAssert2(TEXT("Material'/Game/MaterialSource/MyMaterials/M_Frame_Red.M_Frame_Red'"));
+	DoorFrameMaterialRed = MaterialAssert2.Object;
+	
 }
 
 // Called when the game starts or when spawned
@@ -51,21 +61,16 @@ void APortalDoor::BeginPlay()
 {
 	Super::BeginPlay();
 	
+	if (DoorType == EPortalDoorType::Blue)
+		DoorFrameMesh->SetMaterial(0, DoorFrameMaterialBlue);
+	else
+		DoorFrameMesh->SetMaterial(0, DoorFrameMaterialRed);
+
 }
 
 void APortalDoor::InitDoor(EPortalDoorType dtype)
 {
-	
-	if (dtype == EPortalDoorType::Blue)
-	{
-		static ConstructorHelpers::FObjectFinder<UMaterial> MaterialAssert(TEXT("Material'/Game/MaterialSource/MyMaterials/M_Frame_Blue.M_Frame_Blue'"));
-		if(MaterialAssert.Succeeded()) DoorFrameMesh->SetMaterial(0, MaterialAssert.Object);
-	} else
-	{
-		static ConstructorHelpers::FObjectFinder<UMaterial> MaterialAssert(TEXT("Material'/Game/MaterialSource/MyMaterials/M_Frame_Red.M_Frame_Red'"));
-		if(MaterialAssert.Succeeded()) DoorFrameMesh->SetMaterial(0, MaterialAssert.Object);
-	}
-
+	DoorType = dtype;
 }
 
 const APortalDoor* APortalDoor::GetTheOtherPortal()
@@ -154,6 +159,12 @@ bool FPortalDoorManager::SpawnOrActiveDoor(EPortalDoorType dtype, FTransform* sp
 
 	// TODO: 完善条件判断
 	return true;
+}
+
+void FPortalDoorManager::UpdateViewTarget()
+{
+	
+	
 }
 
 /******                    定义Manager方法 END                             ******/
