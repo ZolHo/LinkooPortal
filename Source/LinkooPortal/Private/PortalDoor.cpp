@@ -3,9 +3,11 @@
 
 #include "PortalDoor.h"
 
+#include "LinkooTools.h"
 #include "Components/SceneCaptureComponent2D.h"
 #include "Engine/TextureRenderTarget2D.h"
 #include "Kismet/GameplayStatics.h"
+#include "Kismet/KismetMathLibrary.h"
 #include "LinkooPortal/LinkooPortalGameMode.h"
 
 
@@ -46,8 +48,15 @@ APortalDoor::APortalDoor()
 	DoorCollision->SetRelativeScale3D(FVector(1.5, 1.5, 0.1));
 
 	PortalViewCapture = CreateDefaultSubobject<USceneCaptureComponent2D>(TEXT("ViewCapture"));
+	PortalViewCapture->SetupAttachment(RootComponent);
+	PortalViewCapture->bEnableClipPlane = true;
 	
 	/******                    初始化组件 END                             ******/
+	
+	static ConstructorHelpers::FObjectFinder<UTextureRenderTarget2D> RenderTargetAssert(TEXT("TextureRenderTarget2D'/Game/MaterialSource/MyMaterials/RenderTargetBlue.RenderTargetBlue'"));
+	if (RenderTargetAssert.Succeeded()) TargetBlue = RenderTargetAssert.Object;
+	static ConstructorHelpers::FObjectFinder<UTextureRenderTarget2D> RenderTargetAssert2(TEXT("TextureRenderTarget2D'/Game/MaterialSource/MyMaterials/RenderTargetRed.RenderTargetRed'"));
+	if (RenderTargetAssert2.Succeeded()) TargetRed = RenderTargetAssert2.Object;
 
 	static ConstructorHelpers::FObjectFinder<UMaterialInterface> MaterialAssert(TEXT("Material'/Game/MaterialSource/MyMaterials/M_Frame_Blue.M_Frame_Blue'"));
 	DoorFrameMaterialBlue = MaterialAssert.Object;
@@ -151,20 +160,45 @@ bool FPortalDoorManager::SpawnOrActiveDoor(EPortalDoorType dtype, FTransform* sp
 	else
 	{
 		// 创建新的传送门
-		auto door = Cast<APortalDoor>(UGameplayStatics::BeginDeferredActorSpawnFromClass(caller, APortalDoor::StaticClass(), *spawnTransform));
+		APortalDoor* door = Cast<APortalDoor>(UGameplayStatics::BeginDeferredActorSpawnFromClass(caller, APortalDoor::StaticClass(), *spawnTransform));
 		door->InitDoor(dtype);
 		(*dealDoor) = door;
 		UGameplayStatics::FinishSpawningActor(door, *spawnTransform);
 	}
 
-	// TODO: 完善条件判断
+	if(dtype==EPortalDoorType::Blue)
+	{
+		(*dealDoor)->PortalViewCapture->TextureTarget = (*dealDoor)->TargetBlue;
+	} else
+	{
+		(*dealDoor)->PortalViewCapture->TextureTarget = (*dealDoor)->TargetRed;
+	}
+
+	// TODO: 完善生成条件判断
 	return true;
 }
 
-void FPortalDoorManager::UpdateViewTarget()
+void FPortalDoorManager::UpdateViewTarget(const UCameraComponent* PlayerCamera)
 {
+	if (BlueDoor && RedDoor)
+	{
+		// 设置屏幕捕获组件2D的位置和角度
+		
+		BlueDoor->PortalViewCapture->SetRelativeLocation(LinkooTools::CaculReflectLocation(PlayerCamera->GetComponentLocation(), RedDoor->GetActorLocation(), RedDoor->GetActorForwardVector()));
+		RedDoor->PortalViewCapture->SetRelativeLocation(LinkooTools::CaculReflectLocation(PlayerCamera->GetComponentLocation(), BlueDoor->GetActorLocation(), BlueDoor->GetActorForwardVector()));
+		
+		BlueDoor->PortalViewCapture->SetRelativeRotation(UKismetMathLibrary::MakeRotFromXZ(LinkooTools::CaculReflectVector(PlayerCamera->GetForwardVector(), RedDoor->GetActorForwardVector()), LinkooTools::CaculReflectVector(PlayerCamera->GetUpVector(), RedDoor->GetActorForwardVector())));
+		RedDoor->PortalViewCapture->SetRelativeRotation(UKismetMathLibrary::MakeRotFromXZ(LinkooTools::CaculReflectVector(PlayerCamera->GetForwardVector(), BlueDoor->GetActorForwardVector()), LinkooTools::CaculReflectVector(PlayerCamera->GetUpVector(), BlueDoor->GetActorForwardVector())));
+
+		// TODO: 裁剪平面设置
+		// BlueDoor->PortalViewCapture->ClipPlaneBase = RedDoor->GetActorLocation();
+		// BlueDoor->PortalViewCapture->ClipPlaneBase = BlueDoor->GetActorLocation();
+	}
 	
-	
+}
+
+FPortalDoorManager::FPortalDoorManager()
+{
 }
 
 /******                    定义Manager方法 END                             ******/

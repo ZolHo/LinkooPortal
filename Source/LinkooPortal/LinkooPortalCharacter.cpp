@@ -11,6 +11,8 @@
 #include "Kismet/GameplayStatics.h"
 #include "MotionControllerComponent.h"
 #include "XRMotionControllerBase.h" // for FXRMotionControllerBase::RightHandSourceId
+#include "Components/SceneCaptureComponent2D.h"
+#include "Engine/TextureRenderTarget2D.h"
 #include "Kismet/KismetMathLibrary.h"
 
 DEFINE_LOG_CATEGORY_STATIC(LogFPChar, Warning, All);
@@ -87,6 +89,8 @@ void ALinkooPortalCharacter::SetupPlayerInputComponent(class UInputComponent* Pl
 
 	// 绑定拾取按键
 	PlayerInputComponent->BindAction("PressE", IE_Pressed, this, &ALinkooPortalCharacter::CrabObject);
+
+	PlayerInputComponent->BindAction("Test", IE_Pressed, this, &ALinkooPortalCharacter::test);
 	
 	// Bind movement events
 	PlayerInputComponent->BindAxis("MoveForward", this, &ALinkooPortalCharacter::MoveForward);
@@ -133,19 +137,25 @@ void ALinkooPortalCharacter::LookUpAtRate(float Rate)
 
 void ALinkooPortalCharacter::LeftFire()
 {
-	fire(EPortalDoorType::Blue);
+	Fire(EPortalDoorType::Blue);
 }
 
 void ALinkooPortalCharacter::RightFire()
 {
-	fire(EPortalDoorType::Red);
+	Fire(EPortalDoorType::Red);
 }
 
 void ALinkooPortalCharacter::CrabObject()
 {
 }
 
-void ALinkooPortalCharacter::fire(EPortalDoorType dtype)
+void ALinkooPortalCharacter::test()
+{
+	if(FPortalDoorManager::Get().BlueDoor->PortalViewCapture->TextureTarget==nullptr)
+	UE_LOG(LogTemp, Warning,TEXT("NAME, %ll"), FPortalDoorManager::Get().BlueDoor->PortalViewCapture->TextureTarget);
+}
+
+void ALinkooPortalCharacter::Fire(EPortalDoorType dtype)
 {
 
 	if (!bIsGrabObj)

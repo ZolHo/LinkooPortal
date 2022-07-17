@@ -41,6 +41,9 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category=Mesh)
 	UStaticMeshComponent* DoorFaceMesh;
 
+	UTextureRenderTarget2D* TargetBlue;
+	UTextureRenderTarget2D* TargetRed;
+
 	// 碰撞检测盒
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category=Collision)
 	UBoxComponent* DoorCollision;
@@ -88,14 +91,16 @@ public:
 	APortalDoor* BlueDoor;
 	APortalDoor* RedDoor;
 
+	
 public:
+	FPortalDoorManager();
 	// 生成传送门，如果内存中存在，则用激活它代替生成
 	bool SpawnOrActiveDoor(EPortalDoorType dtype, FTransform* spawnTransform, AActor* const caller);
 	
 	static FPortalDoorManager& Get();
 
 	// 更新场景捕获组件的位置
-	void UpdateViewTarget();
+	void UpdateViewTarget(const UCameraComponent* PlayerCamera);
 private:
 	UWorld* NowWorld;
 

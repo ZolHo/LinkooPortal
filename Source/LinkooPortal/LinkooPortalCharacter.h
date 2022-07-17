@@ -107,7 +107,9 @@ protected:
 	void LookUpAtRate(float Rate);
 
 	// 真正的开传送枪
-	void fire(EPortalDoorType dtype);
+	void Fire(EPortalDoorType dtype);
+
+	void test();
 	
 protected:
 	// APawn interface
