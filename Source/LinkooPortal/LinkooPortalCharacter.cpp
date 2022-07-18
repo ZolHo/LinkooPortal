@@ -10,9 +10,8 @@
 #include "HeadMountedDisplayFunctionLibrary.h"
 #include "Kismet/GameplayStatics.h"
 #include "MotionControllerComponent.h"
+#include "PortalDoorManager.h"
 #include "XRMotionControllerBase.h" // for FXRMotionControllerBase::RightHandSourceId
-#include "Components/SceneCaptureComponent2D.h"
-#include "Engine/TextureRenderTarget2D.h"
 #include "Kismet/KismetMathLibrary.h"
 
 DEFINE_LOG_CATEGORY_STATIC(LogFPChar, Warning, All);
@@ -65,10 +64,10 @@ void ALinkooPortalCharacter::BeginPlay()
 {
 	// Call the base class  
 	Super::BeginPlay();
-
+	
 	//Attach gun mesh component to Skeleton, doing it here because the skeleton is not yet created in the constructor
 	FP_Gun->AttachToComponent(Mesh1P, FAttachmentTransformRules(EAttachmentRule::SnapToTarget, true), TEXT("GripPoint"));
-	
+
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -151,14 +150,18 @@ void ALinkooPortalCharacter::CrabObject()
 
 void ALinkooPortalCharacter::test()
 {
-	if(FPortalDoorManager::Get().BlueDoor->PortalViewCapture->TextureTarget==nullptr)
-	UE_LOG(LogTemp, Warning,TEXT("NAME, %ll"), FPortalDoorManager::Get().BlueDoor->PortalViewCapture->TextureTarget);
+
+}
+
+void ALinkooPortalCharacter::Tick(float DeltaSeconds)
+{
+	Super::Tick(DeltaSeconds);
 }
 
 void ALinkooPortalCharacter::Fire(EPortalDoorType dtype)
 {
 
-	if (!bIsGrabObj)
+	if (!bIsGrabObj && PDM)
 	{
 		FVector StartLocation;
 		FVector EndLocation;
@@ -167,9 +170,9 @@ void ALinkooPortalCharacter::Fire(EPortalDoorType dtype)
 		// Ignore Array
 		TArray<AActor*> IgnoreActors;
 		IgnoreActors.Add(this);
-		auto PDM = FPortalDoorManager::Get();
-		if (PDM.BlueDoor) IgnoreActors.Add(PDM.BlueDoor);
-		if (PDM.RedDoor) IgnoreActors.Add(PDM.RedDoor);
+	
+		if (PDM->BlueDoor) IgnoreActors.Add(PDM->BlueDoor);
+		if (PDM->RedDoor) IgnoreActors.Add(PDM->RedDoor);
 		
 		FHitResult HitResult;
 		
@@ -185,7 +188,7 @@ void ALinkooPortalCharacter::Fire(EPortalDoorType dtype)
 			SpawnTransform.SetLocation(HitResult.Location + 1 * HitResult.Normal);
 			SpawnTransform.SetRotation(SpawnRotator.Quaternion());
 
-			FPortalDoorManager::Get().SpawnOrActiveDoor(dtype, &SpawnTransform, this);
+			PDM->SpawnOrActiveDoor(dtype, SpawnTransform);
 		}
 	
 		// try and play the sound if specified

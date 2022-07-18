@@ -14,5 +14,4 @@ ALinkooPortalGameMode::ALinkooPortalGameMode()
 
 	// use our custom HUD class
 	HUDClass = ALinkooPortalHUD::StaticClass();
-
 }

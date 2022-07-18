@@ -3,20 +3,19 @@
 
 #include "LinkooTools.h"
 
-LinkooTools::LinkooTools()
+ULinkooTools::ULinkooTools()
 {
 }
 
-LinkooTools::~LinkooTools()
+ULinkooTools::~ULinkooTools()
 {
 }
-
-FVector LinkooTools::CaculReflectLocation(const FVector& DotA, const FVector& DotOri, const FVector& Normal)
+FVector ULinkooTools::CaculReflectLocation(const FVector& DotA, const FVector& DotOri, const FVector& Normal)
 {
-	return DotA -(2 * FVector::DotProduct(DotOri-DotA, Normal) * Normal);
+	return DotA -(2 * FVector::DotProduct(DotA - DotOri, Normal) * Normal);
 }
 
-FVector LinkooTools::CaculReflectVector(const FVector& VecA, const FVector& Normal)
+FVector ULinkooTools::CaculReflectVector(const FVector& VecA, const FVector& Normal)
 {
 	return VecA - 2 * FVector::DotProduct(VecA, Normal) * Normal;
 }

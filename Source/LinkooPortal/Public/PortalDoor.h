@@ -3,9 +3,9 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Camera/CameraComponent.h"
 #include "Components/BoxComponent.h"
 #include "GameFramework/Actor.h"
+#include "Components/SceneCaptureComponent2D.h"
 #include "PortalDoor.generated.h"
 
 UENUM()
@@ -18,7 +18,7 @@ class LINKOOPORTAL_API APortalDoor : public AActor
 {
 	GENERATED_BODY()
 	
-	friend class FPortalDoorManager;
+	friend class APortalDoorManager;
 	
 public:	
 	// Sets default values for this actor's properties
@@ -30,19 +30,13 @@ public:
 	// 门框
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category=Mesh)
 	UStaticMeshComponent* DoorFrameMesh;
-
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category=Materia)
-	UMaterialInterface* DoorFrameMaterialBlue;
-
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category=Materia)
-	UMaterialInterface* DoorFrameMaterialRed;
 	
 	// 门面
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category=Mesh)
 	UStaticMeshComponent* DoorFaceMesh;
-
-	UTextureRenderTarget2D* TargetBlue;
-	UTextureRenderTarget2D* TargetRed;
+	
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category=Mesh)
+	UMaterial* DoorFaceMaterial;
 
 	// 碰撞检测盒
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category=Collision)
@@ -55,20 +49,21 @@ public:
 public:
 
 	// 获取另一扇传送门，可能返回null
+	UFUNCTION(BlueprintCallable)
 	const APortalDoor* GetTheOtherPortal();
 
 	// 获取传送门是否显示在游戏中的Active状态
-	bool GetDoorActive() const;
+	UFUNCTION(BlueprintCallable)
+	bool IsActive() const;
 
 	// 传送门在游戏中不销毁，而是切换Active状态隐藏起来
+	UFUNCTION(BlueprintCallable)
 	void SetDoorActive(bool state);
 
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
-	// 延迟构造时候的初始化
-	void InitDoor(EPortalDoorType dtype);
 
 public:	
 	// Called every frame
@@ -81,29 +76,4 @@ private:
 
 	// 激活状态，true为在游戏中显示， false反之
 	bool ActiveState = true;
-};
-
-
-// 门管
-class FPortalDoorManager
-{
-public:
-	APortalDoor* BlueDoor;
-	APortalDoor* RedDoor;
-
-	
-public:
-	FPortalDoorManager();
-	// 生成传送门，如果内存中存在，则用激活它代替生成
-	bool SpawnOrActiveDoor(EPortalDoorType dtype, FTransform* spawnTransform, AActor* const caller);
-	
-	static FPortalDoorManager& Get();
-
-	// 更新场景捕获组件的位置
-	void UpdateViewTarget(const UCameraComponent* PlayerCamera);
-private:
-	UWorld* NowWorld;
-
-	// 清除Manager管理的门，因为Manager的生命周期大于World，所有切换world时候需要reset
-	void ResetManager();
 };

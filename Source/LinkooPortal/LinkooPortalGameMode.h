@@ -3,7 +3,6 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "PortalDoor.h"
 #include "GameFramework/GameModeBase.h"
 #include "LinkooPortalGameMode.generated.h"
 
@@ -14,7 +13,6 @@ class ALinkooPortalGameMode : public AGameModeBase
 
 public:
 	ALinkooPortalGameMode();
-	
 };
 
 

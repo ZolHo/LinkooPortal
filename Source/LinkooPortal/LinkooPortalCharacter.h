@@ -72,6 +72,9 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Gameplay)
 	uint8 bUsingMotionControllers : 1;
 
+	// 传送门管理器
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	APortalDoorManager* PDM;
 public:
 
 	// 是否抓着东西
@@ -120,6 +123,9 @@ public:
 	USkeletalMeshComponent* GetMesh1P() const { return Mesh1P; }
 	/** Returns FirstPersonCameraComponent subobject **/
 	UCameraComponent* GetFirstPersonCameraComponent() const { return FirstPersonCameraComponent; }
+
+	// 更改传送门监控位置
+	virtual void Tick(float DeltaSeconds) override;
 	
 };
 
