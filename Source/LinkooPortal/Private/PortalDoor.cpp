@@ -37,6 +37,10 @@ APortalDoor::APortalDoor()
 	DoorCollision->SetupAttachment(RootComponent);
 	DoorCollision->SetRelativeScale3D(FVector(1, 2, 3.5));
 
+	InnerCollision = CreateDefaultSubobject<UBoxComponent>(TEXT("InnerCollision"));
+	InnerCollision->SetupAttachment(RootComponent);
+	InnerCollision->SetRelativeScale3D(FVector(0.1, 2, 3.5));
+
 	PortalViewCapture = CreateDefaultSubobject<USceneCaptureComponent2D>(TEXT("ViewCapture"));
 	PortalViewCapture->SetupAttachment(RootComponent);
 	PortalViewCapture->bEnableClipPlane = true;
@@ -57,7 +61,7 @@ void APortalDoor::BeginPlay()
 
 const APortalDoor* APortalDoor::GetTheOtherPortal()
 {
-	return TheOtherDoor;
+	return TheOtherDoor.Get();
 }
 
 // Called every frame
@@ -82,6 +86,9 @@ void APortalDoor::SetDoorActive(bool state)
 		SetActorEnableCollision(false);
 		SetActorTickEnabled(false);
 		DoorFaceMesh->SetMaterial(0, DoorFaceMaterial);
+		// DoorCollision->SetActive(false);
+		// InnerCollision->SetActive(false);
+		
 	} else
 	{
 		SetActorHiddenInGame(false);

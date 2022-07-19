@@ -42,10 +42,18 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category=Collision)
 	UBoxComponent* DoorCollision;
 
+	// 触发传送用的包围盒
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category=Collision)
+	UBoxComponent* InnerCollision;
+	
 	// 捕获的场景
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category=View)
 	USceneCaptureComponent2D* PortalViewCapture;
 
+	// 保存门后面的对象，用于处理物理碰撞
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+	TWeakObjectPtr<class AActor> ActorWhichDoorStick;
+	
 public:
 
 	// 获取另一扇传送门，可能返回null
@@ -72,7 +80,7 @@ public:
 private:
 
 	// 获取对应的另一扇传送门
-	APortalDoor* TheOtherDoor;
+	TWeakObjectPtr<APortalDoor> TheOtherDoor;
 
 	// 激活状态，true为在游戏中显示， false反之
 	bool ActiveState = true;

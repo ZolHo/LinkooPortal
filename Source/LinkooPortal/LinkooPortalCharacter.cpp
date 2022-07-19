@@ -57,6 +57,8 @@ ALinkooPortalCharacter::ALinkooPortalCharacter()
 
 	// Default offset from the character location for projectiles to spawn
 	GunOffset = FVector(100.0f, 0.0f, 10.0f);
+
+	MyHandleComponent = CreateDefaultSubobject<UPhysicsHandleComponent> (TEXT("PhyicsHandle"));
 	
 }
 
@@ -171,8 +173,8 @@ void ALinkooPortalCharacter::Fire(EPortalDoorType dtype)
 		TArray<AActor*> IgnoreActors;
 		IgnoreActors.Add(this);
 	
-		if (PDM->BlueDoor) IgnoreActors.Add(PDM->BlueDoor);
-		if (PDM->RedDoor) IgnoreActors.Add(PDM->RedDoor);
+		IgnoreActors.Add(PDM->BlueDoor.Get());
+		IgnoreActors.Add(PDM->RedDoor.Get());
 		
 		FHitResult HitResult;
 		
@@ -188,7 +190,11 @@ void ALinkooPortalCharacter::Fire(EPortalDoorType dtype)
 			SpawnTransform.SetLocation(HitResult.Location + 1 * HitResult.Normal);
 			SpawnTransform.SetRotation(SpawnRotator.Quaternion());
 
-			PDM->SpawnOrActiveDoor(dtype, SpawnTransform);
+			APortalDoor* Door = PDM->SpawnOrActiveDoor(dtype, SpawnTransform);
+			if (Door)
+			{
+				Door->ActorWhichDoorStick = HitResult.Actor;
+			}
 		}
 	
 		// try and play the sound if specified

@@ -3,10 +3,9 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "PortalDoor.h"
+// #include "PortalDoor.h"
 #include "Camera/CameraComponent.h"
 #include "GameFramework/Actor.h"
-#include "LinkooPortal/LinkooPortalCharacter.h"
 #include "PortalDoorManager.generated.h"
 
 UCLASS()
@@ -27,9 +26,9 @@ public:
 	virtual void Tick(float DeltaTime) override;
 public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
-	APortalDoor* BlueDoor;
+	TWeakObjectPtr<class APortalDoor> BlueDoor;
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
-	APortalDoor* RedDoor;
+	TWeakObjectPtr<class APortalDoor> RedDoor;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
 	UChildActorComponent* BlueDoorComponent;
@@ -52,13 +51,13 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category=Materia)
 	UMaterialInterface* DoorFrameMaterialRed;
 
-	UPROPERTY()
-	ALinkooPortalCharacter* Player;
+	UPROPERTY(BlueprintReadOnly)
+	TWeakObjectPtr<class ALinkooPortalCharacter> Player;
 
 public:
 	// 生成传送门，如果内存中存在，则用激活它代替生成
 	UFUNCTION(BlueprintCallable)
-	bool SpawnOrActiveDoor(EPortalDoorType dtype, FTransform& spawnTransform);
+	APortalDoor* SpawnOrActiveDoor(enum EPortalDoorType dtype, FTransform& spawnTransform);
 
 	// 更新场景捕获组件的位置
 	UFUNCTION(BlueprintCallable)

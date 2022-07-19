@@ -4,8 +4,10 @@
 #include "PortalDoorManager.h"
 
 #include "LinkooTools.h"
+#include "PortalDoor.h"
 #include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetMathLibrary.h"
+#include "LinkooPortal/LinkooPortalCharacter.h"
 
 // Sets default values
 APortalDoorManager::APortalDoorManager()
@@ -78,27 +80,32 @@ void APortalDoorManager::Tick(float DeltaTime)
 	}
 }
 
-bool APortalDoorManager::SpawnOrActiveDoor(EPortalDoorType dtype, FTransform& spawnTransform)
+APortalDoor* APortalDoorManager::SpawnOrActiveDoor(EPortalDoorType dtype, FTransform& spawnTransform)
 {
 	// 利用指针的指针指向这次要操作的是红门还是蓝门
-	APortalDoor** dealDoor;
-	if (dtype == EPortalDoorType::Blue) dealDoor = &BlueDoor;
-	else dealDoor = &RedDoor;
+	TWeakObjectPtr<APortalDoor> dealDoor;
+	if (dtype == EPortalDoorType::Blue) dealDoor = BlueDoor;
+	else dealDoor = RedDoor;
 	
-	if(IsValid(*dealDoor))
+	if(dealDoor.IsValid())
 	{
-		(*dealDoor)->SetDoorActive(true);
-		(*dealDoor)->SetActorTransform(spawnTransform);
+		dealDoor->SetDoorActive(true);
+		dealDoor->SetActorTransform(spawnTransform);
 	}
 
 	if (IsAllReady())
 	{
 		BlueDoor->DoorFaceMesh->SetMaterial(0, MateriaRed);
 		RedDoor->DoorFaceMesh->SetMaterial(0, MateriaBlue);
+
+		// BlueDoor->DoorCollision->SetActive(true);
+		// BlueDoor->InnerCollision->SetActive(true);
+		// RedDoor->DoorCollision->SetActive(true);
+		// RedDoor->InnerCollision->SetActive(true);
 	}
 	
 	// TODO: 完善生成条件判断
-	return true;
+	return dealDoor.Get();
 }
 
 void APortalDoorManager::UpdateViewTarget()
@@ -118,8 +125,11 @@ void APortalDoorManager::UpdateViewTarget()
 	TransRed.SetLocation(RPWL);
 	TransRed.SetRotation(RPWR.Quaternion());
 	
-    BlueDoor->PortalViewCapture->SetWorldTransform(UKismetMathLibrary::ComposeTransforms(UKismetMathLibrary::MakeRelativeTransform(TransBlue, RedDoor->GetActorTransform()), BlueDoor->GetActorTransform()));
-	RedDoor->PortalViewCapture->SetWorldTransform(UKismetMathLibrary::ComposeTransforms(UKismetMathLibrary::MakeRelativeTransform(TransRed, BlueDoor->GetActorTransform()), RedDoor->GetActorTransform()));
+ //    BlueDoor->PortalViewCapture->SetWorldTransform(UKismetMathLibrary::ComposeTransforms(UKismetMathLibrary::MakeRelativeTransform(TransBlue, RedDoor->GetActorTransform()), BlueDoor->GetActorTransform()));
+	// RedDoor->PortalViewCapture->SetWorldTransform(UKismetMathLibrary::ComposeTransforms(UKismetMathLibrary::MakeRelativeTransform(TransRed, BlueDoor->GetActorTransform()), RedDoor->GetActorTransform()));
+
+	BlueDoor->PortalViewCapture->SetWorldTransform(ULinkooTools::CaculTransformForPortal(TransBlue, RedDoor->GetActorTransform(), BlueDoor->GetActorTransform()));
+	RedDoor->PortalViewCapture->SetWorldTransform(ULinkooTools::CaculTransformForPortal(TransRed, BlueDoor->GetActorTransform(), RedDoor->GetActorTransform()));
 
 	// 设置裁剪平面
 	BlueDoor->PortalViewCapture->ClipPlaneBase = BlueDoor->GetActorLocation();
@@ -130,6 +140,6 @@ void APortalDoorManager::UpdateViewTarget()
 
 bool APortalDoorManager::IsAllReady()
 {
-	if (BlueDoor && RedDoor && BlueDoor->IsActive() && RedDoor->IsActive()) return true;
+	if (BlueDoor.IsValid() && RedDoor.IsValid() && BlueDoor->IsActive() && RedDoor->IsActive()) return true;
 	return false;
 }

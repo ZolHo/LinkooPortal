@@ -3,6 +3,7 @@
 
 #include "LinkooTools.h"
 
+
 ULinkooTools::ULinkooTools()
 {
 }
@@ -19,3 +20,4 @@ FVector ULinkooTools::CaculReflectVector(const FVector& VecA, const FVector& Nor
 {
 	return VecA - 2 * FVector::DotProduct(VecA, Normal) * Normal;
 }
+

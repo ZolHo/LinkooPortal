@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "PortalDoor.h"
 #include "GameFramework/Character.h"
+#include "PhysicsEngine/PhysicsHandleComponent.h"
 #include "LinkooPortalCharacter.generated.h"
 
 class UInputComponent;
@@ -36,6 +37,8 @@ class ALinkooPortalCharacter : public ACharacter
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 	UCameraComponent* FirstPersonCameraComponent;
 
+	UPROPERTY(EditDefaultsOnly)
+	UPhysicsHandleComponent* MyHandleComponent;
 
 public:
 	ALinkooPortalCharacter();
