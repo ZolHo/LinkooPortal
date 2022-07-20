@@ -1,6 +1,8 @@
 // Copyright Epic Games, Inc. All Rights Reserved.
 
 #include "LinkooPortalCharacter.h"
+
+#include "CanBeGrab.h"
 #include "LinkooPortalProjectile.h"
 #include "Animation/AnimInstance.h"
 #include "Camera/CameraComponent.h"
@@ -69,7 +71,7 @@ void ALinkooPortalCharacter::BeginPlay()
 	
 	//Attach gun mesh component to Skeleton, doing it here because the skeleton is not yet created in the constructor
 	FP_Gun->AttachToComponent(Mesh1P, FAttachmentTransformRules(EAttachmentRule::SnapToTarget, true), TEXT("GripPoint"));
-
+	
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -148,6 +150,44 @@ void ALinkooPortalCharacter::RightFire()
 
 void ALinkooPortalCharacter::CrabObject()
 {
+	if (bIsGrabObj)
+	{
+		MyHandleComponent->GetGrabbedComponent()->SetCollisionResponseToChannel(ECollisionChannel::ECC_Pawn, ECollisionResponse::ECR_Block);
+		MyHandleComponent->ReleaseComponent();
+
+		bIsGrabObj = false;
+	} else
+	{
+		FVector StartLocation;
+		FVector EndLocation;
+		FVector CameraForwardVector = UKismetMathLibrary::GetForwardVector(GetFirstPersonCameraComponent()->GetComponentRotation());
+		StartLocation = GetFirstPersonCameraComponent()->GetComponentLocation();
+
+		TArray<AActor*> IgnoreActors;
+		IgnoreActors.Add(this);
+		
+		FHitResult HitResult;
+		
+		EndLocation = StartLocation + 300 * CameraForwardVector;
+
+		bool HitSuccess = UKismetSystemLibrary::LineTraceSingle(this, StartLocation, EndLocation, ETraceTypeQuery::TraceTypeQuery1, false,
+			IgnoreActors, EDrawDebugTrace::ForDuration, HitResult, true, FLinearColor::Red, FLinearColor::Green, 5.f);
+
+		if (HitSuccess)
+		{
+			ICanBeGrab* ActorGrab = Cast<ICanBeGrab> (HitResult.GetActor());
+			if (ActorGrab)
+			{
+				
+				MyHandleComponent->GrabComponentAtLocation(HitResult.GetComponent(), FName("Grip_Bone"), HitResult.GetComponent()->GetCenterOfMass());
+				HitResult.GetComponent()->SetCollisionResponseToChannel(ECollisionChannel::ECC_Pawn, ECollisionResponse::ECR_Ignore);
+
+				MyHandleComponent->bRotationConstrained = true;
+				bIsGrabObj = true;
+			}
+		}
+
+	}
 }
 
 void ALinkooPortalCharacter::test()
@@ -158,6 +198,12 @@ void ALinkooPortalCharacter::test()
 void ALinkooPortalCharacter::Tick(float DeltaSeconds)
 {
 	Super::Tick(DeltaSeconds);
+
+	if (bIsGrabObj && MyHandleComponent->GetGrabbedComponent())
+	{
+		MyHandleComponent->SetTargetLocationAndRotation(GetFirstPersonCameraComponent()->GetComponentLocation() + GetFirstPersonCameraComponent()->GetForwardVector() * 150.0,
+			UKismetMathLibrary::MakeRotFromXZ(GetFirstPersonCameraComponent()->GetComponentLocation() - MyHandleComponent->GetGrabbedComponent()->GetComponentLocation(), MyHandleComponent->GetGrabbedComponent()->GetUpVector()));
+	}
 }
 
 void ALinkooPortalCharacter::Fire(EPortalDoorType dtype)
@@ -193,7 +239,7 @@ void ALinkooPortalCharacter::Fire(EPortalDoorType dtype)
 			APortalDoor* Door = PDM->SpawnOrActiveDoor(dtype, SpawnTransform);
 			if (Door)
 			{
-				Door->ActorWhichDoorStick = HitResult.Actor;
+				Door->ActorWhichDoorStick = HitResult.GetActor();
 			}
 		}
 	

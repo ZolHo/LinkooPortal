@@ -31,13 +31,22 @@ public:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 	// 在传送门附近的可以传送的Actor需要创建复制并Tick
-	TArray<AActor*> ActorsNearDoor;
+	TArray<AActor*> ActorsNearBlueDoor;
+	
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+	TArray<AActor*> ActorsNearRedDoor;
+
+	TSet<AActor*> AllNearActors;
+
+	TSet<AActor*> AllCopyActors;
 
 	// 保存自己的Owner Actor
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 	TWeakObjectPtr<class APortalDoorManager> PDM;
 
 public:
+	FTimerHandle DelayTimerHandle;
+	void InitialPDM();
 
 	UFUNCTION()
 	virtual void OnOuterOverlapBegin(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);

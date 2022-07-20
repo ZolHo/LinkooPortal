@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "PortalDoor.h"
+#include "PortalHelperComponent.h"
 #include "GameFramework/Character.h"
 #include "PhysicsEngine/PhysicsHandleComponent.h"
 #include "LinkooPortalCharacter.generated.h"
@@ -78,6 +79,7 @@ public:
 	// 传送门管理器
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	APortalDoorManager* PDM;
+
 public:
 
 	// 是否抓着东西

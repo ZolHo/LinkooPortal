@@ -2,7 +2,9 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Camera/CameraComponent.h"
 #include "Kismet/KismetMathLibrary.h"
+#include "Kismet/KismetSystemLibrary.h"
 #include "LinkooTools.generated.h"
 
 /**
@@ -29,4 +31,5 @@ public:
 	{
 		return UKismetMathLibrary::ComposeTransforms(UKismetMathLibrary::MakeRelativeTransform(Obj, A), B);
 	}
+	
 };

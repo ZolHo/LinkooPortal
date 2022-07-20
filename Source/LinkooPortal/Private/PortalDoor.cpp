@@ -44,9 +44,6 @@ APortalDoor::APortalDoor()
 	PortalViewCapture = CreateDefaultSubobject<USceneCaptureComponent2D>(TEXT("ViewCapture"));
 	PortalViewCapture->SetupAttachment(RootComponent);
 	PortalViewCapture->bEnableClipPlane = true;
-
-	// static ConstructorHelpers::FObjectFinder<UMaterial> MeshMaterial(TEXT("Material'/Game/Geometry/Meshes/CubeMaterial.CubeMaterial'"));
-	// if (MeshMaterial.Succeeded()) DoorFaceMaterial = MeshMaterial.Object;
 	
 	/******                    初始化组件 END                             ******/
 	

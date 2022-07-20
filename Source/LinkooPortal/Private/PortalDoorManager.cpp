@@ -37,9 +37,8 @@ APortalDoorManager::APortalDoorManager()
 
 	BlueDoorComponent->SetupAttachment(RootComponent);
 	RedDoorComponent->SetupAttachment(RootComponent);
-	
-	// BlueDoorComponent->SetChildActorClass(APortalDoor::StaticClass());
-	// RedDoorComponent->SetChildActorClass(APortalDoor::StaticClass());
+
+	PortalHelper = CreateDefaultSubobject<UPortalHelperComponent>(TEXT("PortalHelper"));
 }
 
 // Called when the game starts or when spawned
@@ -124,9 +123,6 @@ void APortalDoorManager::UpdateViewTarget()
 	FTransform TransRed;
 	TransRed.SetLocation(RPWL);
 	TransRed.SetRotation(RPWR.Quaternion());
-	
- //    BlueDoor->PortalViewCapture->SetWorldTransform(UKismetMathLibrary::ComposeTransforms(UKismetMathLibrary::MakeRelativeTransform(TransBlue, RedDoor->GetActorTransform()), BlueDoor->GetActorTransform()));
-	// RedDoor->PortalViewCapture->SetWorldTransform(UKismetMathLibrary::ComposeTransforms(UKismetMathLibrary::MakeRelativeTransform(TransRed, BlueDoor->GetActorTransform()), RedDoor->GetActorTransform()));
 
 	BlueDoor->PortalViewCapture->SetWorldTransform(ULinkooTools::CaculTransformForPortal(TransBlue, RedDoor->GetActorTransform(), BlueDoor->GetActorTransform()));
 	RedDoor->PortalViewCapture->SetWorldTransform(ULinkooTools::CaculTransformForPortal(TransRed, BlueDoor->GetActorTransform(), RedDoor->GetActorTransform()));

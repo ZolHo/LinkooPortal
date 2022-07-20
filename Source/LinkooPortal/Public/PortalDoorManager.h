@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 // #include "PortalDoor.h"
+#include "PortalHelperComponent.h"
 #include "Camera/CameraComponent.h"
 #include "GameFramework/Actor.h"
 #include "PortalDoorManager.generated.h"
@@ -53,6 +54,10 @@ public:
 
 	UPROPERTY(BlueprintReadOnly)
 	TWeakObjectPtr<class ALinkooPortalCharacter> Player;
+
+	// 负责物体穿过传送门前后的处理
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPortalHelperComponent* PortalHelper;
 
 public:
 	// 生成传送门，如果内存中存在，则用激活它代替生成
