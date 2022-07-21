@@ -97,10 +97,8 @@ APortalDoor* APortalDoorManager::SpawnOrActiveDoor(EPortalDoorType dtype, FTrans
 		BlueDoor->DoorFaceMesh->SetMaterial(0, MateriaRed);
 		RedDoor->DoorFaceMesh->SetMaterial(0, MateriaBlue);
 
-		// BlueDoor->DoorCollision->SetActive(true);
-		// BlueDoor->InnerCollision->SetActive(true);
-		// RedDoor->DoorCollision->SetActive(true);
-		// RedDoor->InnerCollision->SetActive(true);
+		BlueDoor->SetActorEnableCollision(true);
+		RedDoor->SetActorEnableCollision(true);
 	}
 	
 	// TODO: 完善生成条件判断

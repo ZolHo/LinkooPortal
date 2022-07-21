@@ -36,10 +36,12 @@ APortalDoor::APortalDoor()
 	DoorCollision = CreateDefaultSubobject<UBoxComponent>(TEXT("DoorCollision"));
 	DoorCollision->SetupAttachment(RootComponent);
 	DoorCollision->SetRelativeScale3D(FVector(1, 2, 3.5));
+	// DoorCollision->SetActive(false);
 
 	InnerCollision = CreateDefaultSubobject<UBoxComponent>(TEXT("InnerCollision"));
 	InnerCollision->SetupAttachment(RootComponent);
 	InnerCollision->SetRelativeScale3D(FVector(0.1, 2, 3.5));
+	// DoorCollision->SetActive(false);
 
 	PortalViewCapture = CreateDefaultSubobject<USceneCaptureComponent2D>(TEXT("ViewCapture"));
 	PortalViewCapture->SetupAttachment(RootComponent);
@@ -53,7 +55,7 @@ APortalDoor::APortalDoor()
 void APortalDoor::BeginPlay()
 {
 	Super::BeginPlay();
-
+	SetDoorActive(false);
 }
 
 const APortalDoor* APortalDoor::GetTheOtherPortal()
@@ -75,7 +77,7 @@ bool APortalDoor::IsActive() const
 
 void APortalDoor::SetDoorActive(bool state)
 {
-	if (state == ActiveState) return;
+	// if (state == ActiveState) return;
 	
 	if (!state)
 	{
@@ -83,13 +85,12 @@ void APortalDoor::SetDoorActive(bool state)
 		SetActorEnableCollision(false);
 		SetActorTickEnabled(false);
 		DoorFaceMesh->SetMaterial(0, DoorFaceMaterial);
-		// DoorCollision->SetActive(false);
-		// InnerCollision->SetActive(false);
+
 		
 	} else
 	{
 		SetActorHiddenInGame(false);
-		SetActorEnableCollision(true);
+		// SetActorEnableCollision(true);
 		SetActorTickEnabled(true);
 	}
 	ActiveState = state;

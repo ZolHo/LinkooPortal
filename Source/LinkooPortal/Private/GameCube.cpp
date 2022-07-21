@@ -20,7 +20,24 @@ AGameCube::AGameCube()
 	RootComponent = MainMesh;
 	MainMesh->SetSimulatePhysics(true);
 
+	MainMesh->SetWorldScale3D(FVector(0.6, 0.6, 0.6));
 	
+}
+
+AActor* AGameCube::SpawnCopyActor()
+{
+	FActorSpawnParameters Parameters;
+	Parameters.Template = this;
+	FTransform Transform;
+	Transform.SetLocation(FVector(0, 0, -1000.0f));
+	Transform.SetScale3D(this->GetActorScale());
+	// UE_LOG(LogTemp, Warning, TEXT(""))
+	AGameCube* NewActor = Cast<AGameCube>(GetWorld()->SpawnActor(this->GetClass(), &Transform,  Parameters));
+	NewActor->MainMesh->SetSimulatePhysics(false);
+	NewActor->MainMesh->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
+	
+
+	return NewActor;
 }
 
 // Called when the game starts or when spawned

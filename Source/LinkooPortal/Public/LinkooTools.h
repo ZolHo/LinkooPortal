@@ -31,5 +31,11 @@ public:
 	{
 		return UKismetMathLibrary::ComposeTransforms(UKismetMathLibrary::MakeRelativeTransform(Obj, A), B);
 	}
+
+	UFUNCTION(BlueprintCallable)
+	static inline bool AIsFrontOfB (AActor* A, AActor* B)
+	{
+		return FVector::DotProduct(A->GetActorLocation() - B->GetActorLocation(), B->GetActorForwardVector()) > 0.0f;
+	}
 	
 };

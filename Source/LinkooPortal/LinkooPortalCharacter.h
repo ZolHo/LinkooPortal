@@ -94,7 +94,7 @@ protected:
 	void RightFire();
 
 	// 拾取
-	void CrabObject();
+	void GrabObject();
 	
 	/** Handles moving forward/backward */
 	void MoveForward(float Val);

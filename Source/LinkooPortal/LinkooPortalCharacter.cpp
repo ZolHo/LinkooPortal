@@ -91,7 +91,7 @@ void ALinkooPortalCharacter::SetupPlayerInputComponent(class UInputComponent* Pl
 	PlayerInputComponent->BindAction("RightClick", IE_Pressed, this, &ALinkooPortalCharacter::RightFire);
 
 	// 绑定拾取按键
-	PlayerInputComponent->BindAction("PressE", IE_Pressed, this, &ALinkooPortalCharacter::CrabObject);
+	PlayerInputComponent->BindAction("PressE", IE_Pressed, this, &ALinkooPortalCharacter::GrabObject);
 
 	PlayerInputComponent->BindAction("Test", IE_Pressed, this, &ALinkooPortalCharacter::test);
 	
@@ -148,7 +148,7 @@ void ALinkooPortalCharacter::RightFire()
 	Fire(EPortalDoorType::Red);
 }
 
-void ALinkooPortalCharacter::CrabObject()
+void ALinkooPortalCharacter::GrabObject()
 {
 	if (bIsGrabObj)
 	{
@@ -156,7 +156,8 @@ void ALinkooPortalCharacter::CrabObject()
 		MyHandleComponent->ReleaseComponent();
 
 		bIsGrabObj = false;
-	} else
+	}
+	else
 	{
 		FVector StartLocation;
 		FVector EndLocation;
@@ -227,7 +228,7 @@ void ALinkooPortalCharacter::Fire(EPortalDoorType dtype)
 		EndLocation = StartLocation + 100000*CameraForwardVector;
 
 		bool HitSuccess = UKismetSystemLibrary::LineTraceSingle(this, StartLocation, EndLocation, ETraceTypeQuery::TraceTypeQuery1, false,
-			IgnoreActors, EDrawDebugTrace::ForDuration, HitResult, true, FLinearColor::Red, FLinearColor::Green, 5.f);
+			IgnoreActors, EDrawDebugTrace::ForDuration, HitResult, true, FLinearColor::Red, FLinearColor::Green, 3.f);
 
 		if (HitSuccess)
 		{
