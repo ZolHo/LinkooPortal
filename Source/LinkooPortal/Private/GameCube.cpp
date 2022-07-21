@@ -4,6 +4,7 @@
 #include "GameCube.h"
 
 #include "CanBeGrab.h"
+#include "LinkooTools.h"
 
 // Sets default values
 AGameCube::AGameCube() 
@@ -36,7 +37,6 @@ AActor* AGameCube::SpawnCopyActor()
 	NewActor->MainMesh->SetSimulatePhysics(false);
 	NewActor->MainMesh->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
 	
-
 	return NewActor;
 }
 
@@ -45,7 +45,7 @@ void AGameCube::BeginPlay()
 {
 	Super::BeginPlay();
 	if (MeshMaterial) MainMesh->SetMaterial(0, MeshMaterial);
-	
+	MainMesh->SetCollisionResponseToChannel(ECollisionChannel::ECC_GameTraceChannel5, ECollisionResponse::ECR_Block);
 }
 
 // Called every frame
@@ -53,5 +53,65 @@ void AGameCube::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+}
+
+void AGameCube::OnOuterOverlapBegin(UPrimitiveComponent* OverlappedComponent, UPortalHelperComponent* PortalHelper)
+{
+	AActor** ServantActorPtr = PortalHelper->MasterServantMap.Find(this);
+	if (ServantActorPtr)
+	{
+		(*ServantActorPtr)->SetActorHiddenInGame(false);
+	}
+	else
+	{
+		AActor* ServantActor =  SpawnCopyActor();
+	
+		PortalHelper->AllCopyActors.Add(ServantActor);
+		PortalHelper->MasterServantMap.Add(this, ServantActor);
+	}
+
+	// 将Actor加入Array和Set引用
+	if (Cast<APortalDoor>(OverlappedComponent->GetOwner())->DoorType == EPortalDoorType::Blue)
+	{
+		PortalHelper->ActorsNearBlueDoor.Add(this);
+	}
+	else
+	{
+		PortalHelper->ActorsNearRedDoor.Add(this);
+	}
+
+}
+
+void AGameCube::OnOuterOverlapEnd(UPrimitiveComponent* OverlappedComponent, UPortalHelperComponent* PortalHelper)
+{
+	if (ULinkooTools::AIsFrontOfB(this, OverlappedComponent->GetOwner()))
+	{
+		// 正面出去则是正常出
+		PortalHelper->ActorsNearRedDoor.Remove(this);
+		PortalHelper->ActorsNearBlueDoor.Remove(this);
+		if(PortalHelper->MasterServantMap[this]) PortalHelper->MasterServantMap[this]->SetActorHiddenInGame(true);
+	}
+	else
+	{
+		// 从后面出去说明准备传送, 速度计算公式：RotatorB * Inv(RotatorA) * VelocityVector
+		PortalHelper->SwitchMasterServant(this);
+		this->FindComponentByClass<UPrimitiveComponent>()->SetPhysicsLinearVelocity(this->GetVelocity().Size()*OverlappedComponent->GetForwardVector());
+	}
+}
+
+void AGameCube::OnInnerOverlapBegin(UPrimitiveComponent* OverlappedComponent, UPortalHelperComponent* PortalHelper)
+{
+	MainMesh->SetCollisionResponseToChannel(ECollisionChannel::ECC_GameTraceChannel3, ECollisionResponse::ECR_Ignore);
+}
+
+void AGameCube::OnInnerOverlapEnd(UPrimitiveComponent* OverlappedComponent, UPortalHelperComponent* PortalHelper)
+{
+	MainMesh->SetCollisionResponseToChannel(ECollisionChannel::ECC_GameTraceChannel3, ECollisionResponse::ECR_Block);
+
+}
+
+void AGameCube::OnEnterPortalTick(APortalDoor* NearDoor, AActor* CopyActor)
+{
+	CopyActor->SetActorTransform(ULinkooTools::CaculTransformForPortal(FTransform(UKismetMathLibrary::MakeRotFromXZ(ULinkooTools::CaculReflectVector(GetActorForwardVector(), NearDoor->GetActorForwardVector()), ULinkooTools::CaculReflectVector(GetActorUpVector(), NearDoor->GetActorForwardVector())), ULinkooTools::CaculReflectLocation(GetActorLocation(), NearDoor->GetActorLocation(), NearDoor->GetActorForwardVector()), GetActorScale()),NearDoor->GetTransform(), NearDoor->GetTheOtherPortal()->GetTransform()));
 }
 

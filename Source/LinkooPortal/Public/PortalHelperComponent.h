@@ -3,7 +3,6 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "CanEnterPortal.h"
 #include "PortalHelperComponent.generated.h"
 
 // 负责传送，复制等操作

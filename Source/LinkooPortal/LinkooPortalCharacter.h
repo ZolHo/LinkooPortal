@@ -47,6 +47,12 @@ public:
 protected:
 	virtual void BeginPlay();
 
+	// 计算手持物品的位置模式，true为普通射线检测，false为传送门中转模式
+	bool bGrabActorMode = true;
+
+	// 保存人面前的那扇门用于抓取Actor
+	TWeakObjectPtr<APortalDoor> DoorWhichBetweenHandleActor;
+	
 public:
 	/** Base turn rate, in deg/sec. Other scaling may affect final turn rate. */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category=Camera)
@@ -84,6 +90,12 @@ public:
 
 	// 是否抓着东西
 	bool bIsGrabObj = false;
+
+	// 松手
+	void ReleaseHandleActor();
+
+	// 抓东西
+	void TraceAndGrabActor();
 	
 protected:
 

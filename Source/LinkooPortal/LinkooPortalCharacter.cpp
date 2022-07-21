@@ -152,43 +152,67 @@ void ALinkooPortalCharacter::GrabObject()
 {
 	if (bIsGrabObj)
 	{
-		MyHandleComponent->GetGrabbedComponent()->SetCollisionResponseToChannel(ECollisionChannel::ECC_Pawn, ECollisionResponse::ECR_Block);
-		MyHandleComponent->ReleaseComponent();
-
-		bIsGrabObj = false;
+		ReleaseHandleActor();
 	}
 	else
 	{
-		FVector StartLocation;
-		FVector EndLocation;
-		FVector CameraForwardVector = UKismetMathLibrary::GetForwardVector(GetFirstPersonCameraComponent()->GetComponentRotation());
-		StartLocation = GetFirstPersonCameraComponent()->GetComponentLocation();
-
-		TArray<AActor*> IgnoreActors;
-		IgnoreActors.Add(this);
-		
-		FHitResult HitResult;
-		
-		EndLocation = StartLocation + 300 * CameraForwardVector;
-
-		bool HitSuccess = UKismetSystemLibrary::LineTraceSingle(this, StartLocation, EndLocation, ETraceTypeQuery::TraceTypeQuery1, false,
-			IgnoreActors, EDrawDebugTrace::ForDuration, HitResult, true, FLinearColor::Red, FLinearColor::Green, 5.f);
-
-		if (HitSuccess)
-		{
-			ICanBeGrab* ActorGrab = Cast<ICanBeGrab> (HitResult.GetActor());
-			if (ActorGrab)
-			{
-				
-				MyHandleComponent->GrabComponentAtLocation(HitResult.GetComponent(), FName("Grip_Bone"), HitResult.GetComponent()->GetCenterOfMass());
-				HitResult.GetComponent()->SetCollisionResponseToChannel(ECollisionChannel::ECC_Pawn, ECollisionResponse::ECR_Ignore);
-
-				MyHandleComponent->bRotationConstrained = true;
-				bIsGrabObj = true;
-			}
-		}
-
+		TraceAndGrabActor();
 	}
+}
+
+void ALinkooPortalCharacter::ReleaseHandleActor()
+{
+	MyHandleComponent->GetGrabbedComponent()->SetCollisionResponseToChannel(ECollisionChannel::ECC_Pawn, ECollisionResponse::ECR_Block);
+	MyHandleComponent->ReleaseComponent();
+
+	bIsGrabObj = false;
+	SetActorTickEnabled(false);
+}
+
+void ALinkooPortalCharacter::TraceAndGrabActor()
+{
+	FVector StartLocation;
+    FVector EndLocation;
+    FVector CameraForwardVector = UKismetMathLibrary::GetForwardVector(GetFirstPersonCameraComponent()->GetComponentRotation());
+    StartLocation = GetFirstPersonCameraComponent()->GetComponentLocation();
+
+    TArray<AActor*> IgnoreActors;
+    IgnoreActors.Add(this);
+    
+    FHitResult HitResult;
+    
+    EndLocation = StartLocation + 300 * CameraForwardVector;
+
+    bool HitSuccess = UKismetSystemLibrary::LineTraceSingle(this, StartLocation, EndLocation, ETraceTypeQuery::TraceTypeQuery1, false,
+    	IgnoreActors, EDrawDebugTrace::ForDuration, HitResult, true, FLinearColor::Red, FLinearColor::Green, 5.f);
+
+    if (HitSuccess)
+    {
+    	
+    	if (Cast<ICanBeGrab> (HitResult.GetActor()))
+    	{
+    		MyHandleComponent->GrabComponentAtLocation(HitResult.GetComponent(), FName("Grip_Bone"), HitResult.GetComponent()->GetCenterOfMass());
+    		HitResult.GetComponent()->SetCollisionResponseToChannel(ECollisionChannel::ECC_Pawn, ECollisionResponse::ECR_Ignore);
+    		
+    		bIsGrabObj = true;
+    		SetActorTickEnabled(true);
+    	}
+    	else if(Cast<APortalDoor>(HitResult.GetActor()))
+    	{
+    		DoorWhichBetweenHandleActor = Cast<APortalDoor>(HitResult.GetActor());
+    		StartLocation = DoorWhichBetweenHandleActor->GetTheOtherPortal()->PortalViewCapture->GetComponentLocation();
+    		EndLocation = StartLocation + 300 * DoorWhichBetweenHandleActor->GetTheOtherPortal()->PortalViewCapture->GetForwardVector();
+    		FHitResult PortalHitResult;
+    		HitSuccess = UKismetSystemLibrary::LineTraceSingle(this, StartLocation, EndLocation, UEngineTypes::ConvertToTraceType(ECollisionChannel::ECC_GameTraceChannel5), false,
+		IgnoreActors, EDrawDebugTrace::ForDuration, PortalHitResult, true, FLinearColor::Red, FLinearColor::Green, 5.f);
+    		if (HitSuccess)
+    		{
+    			HitResult.GetActor()->SetHidden(true);
+    			// TODO: ddd
+    		}
+    		
+    	}
+    }
 }
 
 void ALinkooPortalCharacter::test()
@@ -200,10 +224,17 @@ void ALinkooPortalCharacter::Tick(float DeltaSeconds)
 {
 	Super::Tick(DeltaSeconds);
 
-	if (bIsGrabObj && MyHandleComponent->GetGrabbedComponent())
+	if (MyHandleComponent->GetGrabbedComponent())
 	{
-		MyHandleComponent->SetTargetLocationAndRotation(GetFirstPersonCameraComponent()->GetComponentLocation() + GetFirstPersonCameraComponent()->GetForwardVector() * 150.0,
-			UKismetMathLibrary::MakeRotFromXZ(GetFirstPersonCameraComponent()->GetComponentLocation() - MyHandleComponent->GetGrabbedComponent()->GetComponentLocation(), MyHandleComponent->GetGrabbedComponent()->GetUpVector()));
+		if (bGrabActorMode)
+		{
+			MyHandleComponent->SetTargetLocationAndRotation(GetFirstPersonCameraComponent()->GetComponentLocation() + GetFirstPersonCameraComponent()->GetForwardVector() * 150.0
+				, UKismetMathLibrary::MakeRotFromXZ(GetFirstPersonCameraComponent()->GetComponentLocation() - MyHandleComponent->GetGrabbedComponent()->GetComponentLocation(), MyHandleComponent->GetGrabbedComponent()->GetUpVector()));	
+		}
+		else
+		{
+			
+		}
 	}
 }
 

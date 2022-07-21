@@ -19,6 +19,16 @@ public:
 
 	virtual AActor* SpawnCopyActor() override;
 
+	virtual void OnOuterOverlapBegin(UPrimitiveComponent* OverlappedComponent,UPortalHelperComponent* PortalHelper) override;
+	
+	virtual void OnOuterOverlapEnd(UPrimitiveComponent* OverlappedComponent, UPortalHelperComponent* PortalHelper) override;
+	
+	virtual void OnInnerOverlapBegin(UPrimitiveComponent* OverlappedComponent,  UPortalHelperComponent* PortalHelper) override;
+	
+	virtual void OnInnerOverlapEnd(UPrimitiveComponent* OverlappedComponent, UPortalHelperComponent* PortalHelper) override;
+
+	virtual void OnEnterPortalTick(APortalDoor* NearDoor, AActor* CopyActor) override;
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;

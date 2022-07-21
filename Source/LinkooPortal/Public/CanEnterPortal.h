@@ -3,6 +3,8 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "PortalDoor.h"
+#include "PortalHelperComponent.h"
 #include "UObject/Interface.h"
 #include "CanEnterPortal.generated.h"
 
@@ -24,4 +26,13 @@ public:
 	UFUNCTION()
 	virtual AActor* SpawnCopyActor() = 0;
 
+	virtual void OnOuterOverlapBegin(UPrimitiveComponent* OverlappedComponent, UPortalHelperComponent* PortalHelper)= 0;
+
+	virtual void OnOuterOverlapEnd(UPrimitiveComponent* OverlappedComponent, UPortalHelperComponent* PortalHelper)= 0;
+
+	virtual void OnInnerOverlapBegin(UPrimitiveComponent* OverlappedComponent, UPortalHelperComponent* PortalHelper)= 0;
+
+	virtual void OnInnerOverlapEnd(UPrimitiveComponent* OverlappedComponent, UPortalHelperComponent* PortalHelper)= 0;
+
+	virtual void OnEnterPortalTick(APortalDoor* NearDoor, AActor* CopyActor)= 0;
 };
