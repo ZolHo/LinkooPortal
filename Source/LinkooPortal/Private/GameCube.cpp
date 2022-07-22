@@ -5,6 +5,7 @@
 
 #include "CanBeGrab.h"
 #include "LinkooTools.h"
+#include "LinkooPortal/LinkooPortal.h"
 
 // Sets default values
 AGameCube::AGameCube() 
@@ -35,8 +36,8 @@ AActor* AGameCube::SpawnCopyActor()
 	// UE_LOG(LogTemp, Warning, TEXT(""))
 	AGameCube* NewActor = Cast<AGameCube>(GetWorld()->SpawnActor(this->GetClass(), &Transform,  Parameters));
 	NewActor->MainMesh->SetSimulatePhysics(false);
-	NewActor->MainMesh->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
-	
+	NewActor->MainMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	MainMesh->SetCollisionResponseToChannel(ECollisionChannel::ECC_OnlyCanGrab, ECollisionResponse::ECR_Block);
 	return NewActor;
 }
 
@@ -45,7 +46,7 @@ void AGameCube::BeginPlay()
 {
 	Super::BeginPlay();
 	if (MeshMaterial) MainMesh->SetMaterial(0, MeshMaterial);
-	MainMesh->SetCollisionResponseToChannel(ECollisionChannel::ECC_GameTraceChannel5, ECollisionResponse::ECR_Block);
+	
 }
 
 // Called every frame
@@ -95,7 +96,7 @@ void AGameCube::OnOuterOverlapEnd(UPrimitiveComponent* OverlappedComponent, UPor
 	{
 		// 从后面出去说明准备传送, 速度计算公式：RotatorB * Inv(RotatorA) * VelocityVector
 		PortalHelper->SwitchMasterServant(this);
-		this->FindComponentByClass<UPrimitiveComponent>()->SetPhysicsLinearVelocity(this->GetVelocity().Size()*OverlappedComponent->GetForwardVector());
+		this->FindComponentByClass<UPrimitiveComponent>()->SetPhysicsLinearVelocity(this->GetVelocity().Size()*Cast<APortalDoor>(OverlappedComponent->GetOwner())->GetTheOtherPortal()->GetActorForwardVector());
 	}
 }
 

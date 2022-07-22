@@ -13,7 +13,7 @@
 #include "Kismet/GameplayStatics.h"
 #include "MotionControllerComponent.h"
 #include "PortalDoorManager.h"
-#include "XRMotionControllerBase.h" // for FXRMotionControllerBase::RightHandSourceId
+#include "LinkooPortal.h"
 #include "Kismet/KismetMathLibrary.h"
 
 DEFINE_LOG_CATEGORY_STATIC(LogFPChar, Warning, All);
@@ -23,6 +23,7 @@ DEFINE_LOG_CATEGORY_STATIC(LogFPChar, Warning, All);
 
 ALinkooPortalCharacter::ALinkooPortalCharacter()
 {
+	PrimaryActorTick.TickGroup = ETickingGroup::TG_EndPhysics;
 	// Set size for collision capsule
 	GetCapsuleComponent()->InitCapsuleSize(55.f, 96.0f);
 
@@ -167,6 +168,7 @@ void ALinkooPortalCharacter::ReleaseHandleActor()
 
 	bIsGrabObj = false;
 	SetActorTickEnabled(false);
+	MyHandleComponent->bInterpolateTarget = true;
 }
 
 void ALinkooPortalCharacter::TraceAndGrabActor()
@@ -183,36 +185,71 @@ void ALinkooPortalCharacter::TraceAndGrabActor()
     
     EndLocation = StartLocation + 300 * CameraForwardVector;
 
-    bool HitSuccess = UKismetSystemLibrary::LineTraceSingle(this, StartLocation, EndLocation, ETraceTypeQuery::TraceTypeQuery1, false,
+    bool HitSuccess = UKismetSystemLibrary::LineTraceSingle(this, StartLocation, EndLocation, UEngineTypes::ConvertToTraceType(ECC_Camera), false,
     	IgnoreActors, EDrawDebugTrace::ForDuration, HitResult, true, FLinearColor::Red, FLinearColor::Green, 5.f);
 
     if (HitSuccess)
     {
-    	
+    	// UE_LOG(LogTemp, Error, TEXT("%s"), *HitResult.GetActor()->GetFullName());
     	if (Cast<ICanBeGrab> (HitResult.GetActor()))
     	{
-    		MyHandleComponent->GrabComponentAtLocation(HitResult.GetComponent(), FName("Grip_Bone"), HitResult.GetComponent()->GetCenterOfMass());
+    		SetGrabMode(true);
+    		MyHandleComponent->GrabComponentAtLocation(HitResult.GetComponent(), FName(""), HitResult.GetComponent()->GetCenterOfMass());
     		HitResult.GetComponent()->SetCollisionResponseToChannel(ECollisionChannel::ECC_Pawn, ECollisionResponse::ECR_Ignore);
     		
     		bIsGrabObj = true;
     		SetActorTickEnabled(true);
+    		MyHandleComponent->bInterpolateTarget = false;
     	}
-    	else if(Cast<APortalDoor>(HitResult.GetActor()))
+    	else if( Cast<APortalDoor>(HitResult.GetActor()))
     	{
+    		// 如果人物想穿墙拿东西，则需要从对面门的摄像机发出穿透门的光线
     		DoorWhichBetweenHandleActor = Cast<APortalDoor>(HitResult.GetActor());
     		StartLocation = DoorWhichBetweenHandleActor->GetTheOtherPortal()->PortalViewCapture->GetComponentLocation();
     		EndLocation = StartLocation + 300 * DoorWhichBetweenHandleActor->GetTheOtherPortal()->PortalViewCapture->GetForwardVector();
     		FHitResult PortalHitResult;
-    		HitSuccess = UKismetSystemLibrary::LineTraceSingle(this, StartLocation, EndLocation, UEngineTypes::ConvertToTraceType(ECollisionChannel::ECC_GameTraceChannel5), false,
+    		HitSuccess = UKismetSystemLibrary::LineTraceSingle(this, StartLocation, EndLocation, UEngineTypes::ConvertToTraceType(ECollisionChannel::ECC_OnlyCanGrab), false,
 		IgnoreActors, EDrawDebugTrace::ForDuration, PortalHitResult, true, FLinearColor::Red, FLinearColor::Green, 5.f);
     		if (HitSuccess)
     		{
-    			HitResult.GetActor()->SetHidden(true);
-    			// TODO: ddd
+    			// 更改handle 模式为穿墙持有
+    			SetGrabMode(false);
+    			
+    			MyHandleComponent->GrabComponentAtLocation(PortalHitResult.GetComponent(), FName(""), PortalHitResult.GetComponent()->GetCenterOfMass());
+    			PortalHitResult.GetComponent()->SetCollisionResponseToChannel(ECollisionChannel::ECC_Pawn, ECollisionResponse::ECR_Ignore);
+    		
+    			bIsGrabObj = true;
+    			SetActorTickEnabled(true);
+    			MyHandleComponent->bInterpolateTarget = false;
     		}
     		
     	}
     }
+}
+
+void ALinkooPortalCharacter::RecastDoorBetweenPawnAndObject()
+{
+	FVector StartLocation;
+	FVector EndLocation;
+	FVector CameraForwardVector = UKismetMathLibrary::GetForwardVector(GetFirstPersonCameraComponent()->GetComponentRotation());
+	StartLocation = GetFirstPersonCameraComponent()->GetComponentLocation();
+
+	TArray<AActor*> IgnoreActors;
+	IgnoreActors.Add(this);
+    
+	FHitResult HitResult;
+    
+	EndLocation = StartLocation + 300 * CameraForwardVector;
+
+	bool HitSuccess = UKismetSystemLibrary::LineTraceSingle(this, StartLocation, EndLocation, UEngineTypes::ConvertToTraceType(ECC_Camera), false,
+		IgnoreActors, EDrawDebugTrace::ForDuration, HitResult, true, FLinearColor::Red, FLinearColor::Green, 5.f);
+	if (HitSuccess)
+	{
+		if(auto TempPtr = Cast<APortalDoor>(HitResult.Actor))
+		{
+			DoorWhichBetweenHandleActor = TempPtr;
+		}
+	}
 }
 
 void ALinkooPortalCharacter::test()
@@ -228,14 +265,30 @@ void ALinkooPortalCharacter::Tick(float DeltaSeconds)
 	{
 		if (bGrabActorMode)
 		{
-			MyHandleComponent->SetTargetLocationAndRotation(GetFirstPersonCameraComponent()->GetComponentLocation() + GetFirstPersonCameraComponent()->GetForwardVector() * 150.0
-				, UKismetMathLibrary::MakeRotFromXZ(GetFirstPersonCameraComponent()->GetComponentLocation() - MyHandleComponent->GetGrabbedComponent()->GetComponentLocation(), MyHandleComponent->GetGrabbedComponent()->GetUpVector()));	
+			MyHandleComponent->SetTargetLocation(GetFirstPersonCameraComponent()->GetComponentLocation() + GetFirstPersonCameraComponent()->GetForwardVector() * 150.0);	
 		}
 		else
 		{
-			
+			check(DoorWhichBetweenHandleActor.IsValid());
+			auto View = DoorWhichBetweenHandleActor->GetTheOtherPortal()->PortalViewCapture;
+			MyHandleComponent->SetTargetLocation(View->GetComponentLocation() + View->GetForwardVector() * 150.0);
 		}
 	}
+}
+
+void ALinkooPortalCharacter::ReversGrabMode()
+{
+	SetGrabMode(!bGrabActorMode);
+}
+
+void ALinkooPortalCharacter::SetGrabMode(bool Mode)
+{
+	bGrabActorMode = Mode;
+	if (bGrabActorMode == false)
+	{
+		RecastDoorBetweenPawnAndObject();
+	}
+
 }
 
 void ALinkooPortalCharacter::Fire(EPortalDoorType dtype)
@@ -273,6 +326,7 @@ void ALinkooPortalCharacter::Fire(EPortalDoorType dtype)
 			{
 				Door->ActorWhichDoorStick = HitResult.GetActor();
 			}
+			
 		}
 	
 		// try and play the sound if specified

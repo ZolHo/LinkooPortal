@@ -44,6 +44,13 @@ class ALinkooPortalCharacter : public ACharacter
 public:
 	ALinkooPortalCharacter();
 
+	void ReversGrabMode();
+
+	void SetGrabMode(bool Mode);
+
+	// 计算人面前的门
+	void RecastDoorBetweenPawnAndObject();
+	
 protected:
 	virtual void BeginPlay();
 
@@ -91,10 +98,10 @@ public:
 	// 是否抓着东西
 	bool bIsGrabObj = false;
 
-	// 松手
+	// 松手，主动松手和被阻挡时自动松手
 	void ReleaseHandleActor();
 
-	// 抓东西
+	// 抓东西，考虑穿墙和不穿墙两种方式
 	void TraceAndGrabActor();
 	
 protected:
