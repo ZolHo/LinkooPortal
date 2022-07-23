@@ -168,6 +168,7 @@ void ALinkooPortalCharacter::ReleaseHandleActor()
 
 	bIsGrabObj = false;
 	SetActorTickEnabled(false);
+	SetGrabMode(true);
 	MyHandleComponent->bInterpolateTarget = true;
 }
 
@@ -263,6 +264,11 @@ void ALinkooPortalCharacter::Tick(float DeltaSeconds)
 
 	if (MyHandleComponent->GetGrabbedComponent())
 	{
+		if (bPreGrabMode != bGrabActorMode)
+		{
+			SetHandleNoCollisionUntilNextFrame();
+		}
+		
 		if (bGrabActorMode)
 		{
 			MyHandleComponent->SetTargetLocation(GetFirstPersonCameraComponent()->GetComponentLocation() + GetFirstPersonCameraComponent()->GetForwardVector() * 150.0);	
@@ -273,6 +279,7 @@ void ALinkooPortalCharacter::Tick(float DeltaSeconds)
 			auto View = DoorWhichBetweenHandleActor->GetTheOtherPortal()->PortalViewCapture;
 			MyHandleComponent->SetTargetLocation(View->GetComponentLocation() + View->GetForwardVector() * 150.0);
 		}
+		bPreGrabMode = bGrabActorMode;
 	}
 }
 
@@ -350,3 +357,65 @@ void ALinkooPortalCharacter::Fire(EPortalDoorType dtype)
 		// TODO: 持有东西时开枪应当发出操作失败的效果
 	}
 }
+
+void ALinkooPortalCharacter::SetHandleNoCollisionUntilNextFrame()
+{
+	if (MyHandleComponent->GetGrabbedComponent())
+	{
+		MyHandleComponent->GetGrabbedComponent()->GetOwner()->SetActorEnableCollision(false);
+		GetWorld()->GetTimerManager().SetTimer(SetHandleCollisionTimerHandle, this, &ALinkooPortalCharacter::ExecuteTimer, 0.01f, true);
+	}
+}
+
+void ALinkooPortalCharacter::ExecuteTimer()
+{
+	if (MyHandleComponent->GetGrabbedComponent())
+	{
+		MyHandleComponent->GetGrabbedComponent()->GetOwner()->SetActorEnableCollision(true);
+		GetWorld()->GetTimerManager().ClearTimer(SetHandleCollisionTimerHandle);
+	}
+}
+
+bool ALinkooPortalCharacter::IsActorEquelHandle(AActor* TheActor)
+{
+	if (bIsGrabObj)
+	{
+		return MyHandleComponent->GetGrabbedComponent()->GetOwner()==TheActor;
+	}
+	return false;
+	
+}
+
+
+/**    ------------------------ 重载ICanEntryPortal --------------------------       **/
+
+
+AActor* ALinkooPortalCharacter::SpawnCopyActor()
+{
+}
+
+void ALinkooPortalCharacter::OnOuterOverlapBegin(UPrimitiveComponent* OverlappedComponent,
+	UPortalHelperComponent* PortalHelper)
+{
+}
+
+void ALinkooPortalCharacter::OnOuterOverlapEnd(UPrimitiveComponent* OverlappedComponent,
+	UPortalHelperComponent* PortalHelper)
+{
+}
+
+void ALinkooPortalCharacter::OnInnerOverlapBegin(UPrimitiveComponent* OverlappedComponent,
+	UPortalHelperComponent* PortalHelper)
+{
+}
+
+void ALinkooPortalCharacter::OnInnerOverlapEnd(UPrimitiveComponent* OverlappedComponent,
+	UPortalHelperComponent* PortalHelper)
+{
+}
+
+void ALinkooPortalCharacter::OnEnterPortalTick(APortalDoor* NearDoor, AActor* CopyActor)
+{
+}
+
+/**    ------------------------ 重载ICanEntryPortal END --------------------------       **

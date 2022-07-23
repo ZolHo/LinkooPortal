@@ -16,7 +16,7 @@ UPortalHelperComponent::UPortalHelperComponent()
 	// Set this component to be initialized when the game starts, and to be ticked every frame.  You can turn these features
 	// off to improve performance if you don't need them.
 	PrimaryComponentTick.bCanEverTick = true;
-	PrimaryComponentTick.TickGroup = ETickingGroup::TG_EndPhysics;
+	PrimaryComponentTick.TickGroup = ETickingGroup::TG_PrePhysics;
 }
 
 
@@ -55,11 +55,21 @@ void UPortalHelperComponent::SwitchMasterServant(AActor* MasterActor)
 	ActorsNearRedDoor.Remove(MasterActor);
 	
 	// check (MasterServantMap[MasterActor]);
-	
-	Cast<ALinkooPortalCharacter>(UGameplayStatics::GetPlayerPawn(this, 0))->ReversGrabMode();
+	auto GameCharact = Cast<ALinkooPortalCharacter>(UGameplayStatics::GetPlayerPawn(this, 0));
 
 	AActor* ServantActor = MasterServantMap[MasterActor];
-	MasterActor->SetActorTransform(ServantActor->GetTransform() );
+	
+	if (!GameCharact->IsActorEquelHandle(MasterActor))
+	{
+		
+		MasterActor->SetActorTransform(ServantActor->GetTransform() );
+	}
+	else
+	{
+		MasterActor->SetActorRotation(ServantActor->GetActorRotation());
+		GameCharact->ReversGrabMode();
+	}
+	
 }
 
 void UPortalHelperComponent::OnOuterOverlapBegin(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,

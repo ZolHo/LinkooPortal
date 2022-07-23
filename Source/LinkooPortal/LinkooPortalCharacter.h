@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "CanEnterPortal.h"
 #include "PortalDoor.h"
 #include "PortalHelperComponent.h"
 #include "GameFramework/Character.h"
@@ -18,7 +19,7 @@ class UAnimMontage;
 class USoundBase;
 
 UCLASS(config=Game)
-class ALinkooPortalCharacter : public ACharacter
+class ALinkooPortalCharacter : public ACharacter, public ICanEnterPortal
 {
 	GENERATED_BODY()
 
@@ -104,6 +105,14 @@ public:
 	// 抓东西，考虑穿墙和不穿墙两种方式
 	void TraceAndGrabActor();
 	
+	// 以下三个时为了解决物理抓柄和瞬移之间的冲突
+	FTimerHandle SetHandleCollisionTimerHandle;
+	void SetHandleNoCollisionUntilNextFrame();
+	void ExecuteTimer();
+	bool bPreGrabMode;
+
+	// 比较是不是手上拿的Actor
+	bool IsActorEquelHandle(AActor* TheActor);
 protected:
 
 	// 左键蓝门
@@ -150,6 +159,17 @@ public:
 
 	// 更改传送门监控位置
 	virtual void Tick(float DeltaSeconds) override;
-	
+
+public :
+	virtual AActor* SpawnCopyActor() override;
+	virtual void OnOuterOverlapBegin(UPrimitiveComponent* OverlappedComponent,
+		UPortalHelperComponent* PortalHelper) override;
+	virtual void
+	OnOuterOverlapEnd(UPrimitiveComponent* OverlappedComponent, UPortalHelperComponent* PortalHelper) override;
+	virtual void OnInnerOverlapBegin(UPrimitiveComponent* OverlappedComponent,
+		UPortalHelperComponent* PortalHelper) override;
+	virtual void
+	OnInnerOverlapEnd(UPrimitiveComponent* OverlappedComponent, UPortalHelperComponent* PortalHelper) override;
+	virtual void OnEnterPortalTick(APortalDoor* NearDoor, AActor* CopyActor) override;
 };
 

@@ -96,7 +96,16 @@ void AGameCube::OnOuterOverlapEnd(UPrimitiveComponent* OverlappedComponent, UPor
 	{
 		// 从后面出去说明准备传送, 速度计算公式：RotatorB * Inv(RotatorA) * VelocityVector
 		PortalHelper->SwitchMasterServant(this);
-		this->FindComponentByClass<UPrimitiveComponent>()->SetPhysicsLinearVelocity(this->GetVelocity().Size()*Cast<APortalDoor>(OverlappedComponent->GetOwner())->GetTheOtherPortal()->GetActorForwardVector());
+		const APortalDoor* OtherDoor = Cast<APortalDoor>(OverlappedComponent->GetOwner())->GetTheOtherPortal();
+		if(FVector::DotProduct(OtherDoor->GetActorForwardVector(), FVector(0,0,1))> 0.9)
+		{
+			// 门朝天时给个最小速度5m/s
+			this->FindComponentByClass<UPrimitiveComponent>()->SetPhysicsLinearVelocity(FMath::Clamp(this->GetVelocity().Size(), 500.0f ,100000.0f) * OtherDoor->GetActorForwardVector());
+		}
+		else
+		{
+			this->FindComponentByClass<UPrimitiveComponent>()->SetPhysicsLinearVelocity(FMath::Clamp(this->GetVelocity().Size(), 10.0f ,100000.0f) * OtherDoor->GetActorForwardVector());
+		}
 	}
 }
 
