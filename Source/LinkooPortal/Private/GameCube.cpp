@@ -5,7 +5,9 @@
 
 #include "CanBeGrab.h"
 #include "LinkooTools.h"
+#include "Kismet/GameplayStatics.h"
 #include "LinkooPortal/LinkooPortal.h"
+#include "LinkooPortal/LinkooPortalCharacter.h"
 
 // Sets default values
 AGameCube::AGameCube() 
@@ -125,3 +127,17 @@ void AGameCube::OnEnterPortalTick(APortalDoor* NearDoor, AActor* CopyActor)
 	CopyActor->SetActorTransform(ULinkooTools::CaculTransformForPortal(FTransform(UKismetMathLibrary::MakeRotFromXZ(ULinkooTools::CaculReflectVector(GetActorForwardVector(), NearDoor->GetActorForwardVector()), ULinkooTools::CaculReflectVector(GetActorUpVector(), NearDoor->GetActorForwardVector())), ULinkooTools::CaculReflectLocation(GetActorLocation(), NearDoor->GetActorLocation(), NearDoor->GetActorForwardVector()), GetActorScale()),NearDoor->GetTransform(), NearDoor->GetTheOtherPortal()->GetTransform()));
 }
 
+void AGameCube::OnSwitchMasterServant(AActor* CopyActor)
+{
+	auto GameCharact = Cast<ALinkooPortalCharacter>(UGameplayStatics::GetPlayerPawn(this, 0));
+
+	if (!GameCharact->IsActorEquelHandle(this))
+	{
+		SetActorTransform(CopyActor->GetTransform() );
+	}
+	else
+	{
+		SetActorRotation(CopyActor->GetActorRotation());
+		GameCharact->ReversGrabMode();
+	}
+}

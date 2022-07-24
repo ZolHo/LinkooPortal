@@ -53,23 +53,10 @@ void UPortalHelperComponent::SwitchMasterServant(AActor* MasterActor)
 {
 	ActorsNearBlueDoor.Remove(MasterActor);
 	ActorsNearRedDoor.Remove(MasterActor);
-	
-	// check (MasterServantMap[MasterActor]);
-	auto GameCharact = Cast<ALinkooPortalCharacter>(UGameplayStatics::GetPlayerPawn(this, 0));
 
 	AActor* ServantActor = MasterServantMap[MasterActor];
 	
-	if (!GameCharact->IsActorEquelHandle(MasterActor))
-	{
-		
-		MasterActor->SetActorTransform(ServantActor->GetTransform() );
-	}
-	else
-	{
-		MasterActor->SetActorRotation(ServantActor->GetActorRotation());
-		GameCharact->ReversGrabMode();
-	}
-	
+	Cast<ICanEnterPortal>(MasterActor)->OnSwitchMasterServant(ServantActor);
 }
 
 void UPortalHelperComponent::OnOuterOverlapBegin(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,

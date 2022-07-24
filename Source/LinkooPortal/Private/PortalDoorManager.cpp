@@ -15,21 +15,6 @@ APortalDoorManager::APortalDoorManager()
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 	
-	// static ConstructorHelpers::FObjectFinder<UTextureRenderTarget2D> RenderTargetAssert(TEXT("TextureRenderTarget2D'/Game/MaterialSource/MyMaterials/RenderTargetBlue.RenderTargetBlue'"));
-	// if (RenderTargetAssert.Succeeded()) TargetBlue = RenderTargetAssert.Object;
-	// static ConstructorHelpers::FObjectFinder<UTextureRenderTarget2D> RenderTargetAssert2(TEXT("TextureRenderTarget2D'/Game/MaterialSource/MyMaterials/RenderTargetRed.RenderTargetRed'"));
-	// if (RenderTargetAssert2.Succeeded()) TargetRed = RenderTargetAssert2.Object;
-
-	// static ConstructorHelpers::FObjectFinder<UMaterialInterface> RenderMat(TEXT("Material'/Game/MaterialSource/MyMaterials/TargetMatBlue.TargetMatBlue'"));
-	// if (RenderMat.Succeeded()) MateriaBlue = RenderMat.Object;
-	// static ConstructorHelpers::FObjectFinder<UMaterialInterface> RenderMat2(TEXT("Material'/Game/MaterialSource/MyMaterials/TargetMatRed.TargetMatRed'"));
-	// if (RenderMat2.Succeeded()) MateriaRed = RenderMat2.Object;
-
-	// static ConstructorHelpers::FObjectFinder<UMaterialInterface> MaterialAssert(TEXT("Material'/Game/MaterialSource/MyMaterials/M_Frame_Blue.M_Frame_Blue'"));
-	// DoorFrameMaterialBlue = MaterialAssert.Object;
-	// static ConstructorHelpers::FObjectFinder<UMaterialInterface> MaterialAssert2(TEXT("Material'/Game/MaterialSource/MyMaterials/M_Frame_Red.M_Frame_Red'"));
-	// DoorFrameMaterialRed = MaterialAssert2.Object;
-
 	RootComponent = CreateDefaultSubobject<USceneComponent>(TEXT("RootScence"));
 	
 	BlueDoorComponent = CreateDefaultSubobject<UChildActorComponent>(TEXT("BlueDoor"));
@@ -58,6 +43,7 @@ void APortalDoorManager::BeginPlay()
 
 	BlueDoor->DoorFrameMesh->SetMaterial(0, DoorFrameMaterialBlue);
 	RedDoor->DoorFrameMesh->SetMaterial(0, DoorFrameMaterialRed);
+	
 
 	BlueDoor->PortalViewCapture->TextureTarget = TargetBlue;
 	RedDoor->PortalViewCapture->TextureTarget = TargetRed;

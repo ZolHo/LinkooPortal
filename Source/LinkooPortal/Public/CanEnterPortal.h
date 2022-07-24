@@ -35,4 +35,6 @@ public:
 	virtual void OnInnerOverlapEnd(UPrimitiveComponent* OverlappedComponent, UPortalHelperComponent* PortalHelper)= 0;
 
 	virtual void OnEnterPortalTick(APortalDoor* NearDoor, AActor* CopyActor)= 0;
+
+	virtual void OnSwitchMasterServant(AActor* CopyActor) = 0;
 };

@@ -170,6 +170,8 @@ public :
 		UPortalHelperComponent* PortalHelper) override;
 	virtual void
 	OnInnerOverlapEnd(UPrimitiveComponent* OverlappedComponent, UPortalHelperComponent* PortalHelper) override;
+
 	virtual void OnEnterPortalTick(APortalDoor* NearDoor, AActor* CopyActor) override;
+	virtual void OnSwitchMasterServant(AActor* CopyActor) override;
 };
 
