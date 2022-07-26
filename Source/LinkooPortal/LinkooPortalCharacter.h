@@ -2,6 +2,7 @@
 
 #pragma once
 
+
 #include "CoreMinimal.h"
 #include "CanEnterPortal.h"
 #include "PortalDoor.h"
@@ -111,8 +112,20 @@ public:
 	void ExecuteTimer();
 	bool bPreGrabMode;
 
+	// 是否需要传送
+	bool bNeedSwap = false;
+	TWeakObjectPtr<UPortalHelperComponent> PHC;
+	APortalDoor* NowInDoor;
+	void RealSwitch(AActor* CopyActor, UPortalHelperComponent* PortalHelper);
 	// 比较是不是手上拿的Actor
 	bool IsActorEquelHandle(AActor* TheActor);
+
+	//检查是否倾斜
+	UFUNCTION(BlueprintCallable, BlueprintPure)
+	bool ChekIsBodyBias();
+	// // 恢复摄像机的旋转
+	UFUNCTION(BlueprintCallable)
+	void RecureCameraRot(float DeltaSeconds) ;
 protected:
 
 	// 左键蓝门
@@ -172,6 +185,6 @@ public :
 	OnInnerOverlapEnd(UPrimitiveComponent* OverlappedComponent, UPortalHelperComponent* PortalHelper) override;
 
 	virtual void OnEnterPortalTick(APortalDoor* NearDoor, AActor* CopyActor) override;
-	virtual void OnSwitchMasterServant(AActor* CopyActor) override;
+	virtual void OnSwitchMasterServant(AActor* CopyActor, UPortalHelperComponent* PortalHelper) override;
 };
 

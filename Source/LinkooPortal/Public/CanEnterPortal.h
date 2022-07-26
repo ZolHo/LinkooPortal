@@ -36,5 +36,5 @@ public:
 
 	virtual void OnEnterPortalTick(APortalDoor* NearDoor, AActor* CopyActor)= 0;
 
-	virtual void OnSwitchMasterServant(AActor* CopyActor) = 0;
+	virtual void OnSwitchMasterServant(AActor* CopyActor, UPortalHelperComponent* PortalHelper) = 0;
 };

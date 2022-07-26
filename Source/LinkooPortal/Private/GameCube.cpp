@@ -124,13 +124,14 @@ void AGameCube::OnInnerOverlapEnd(UPrimitiveComponent* OverlappedComponent, UPor
 
 void AGameCube::OnEnterPortalTick(APortalDoor* NearDoor, AActor* CopyActor)
 {
-	CopyActor->SetActorTransform(ULinkooTools::CaculTransformForPortal(FTransform(UKismetMathLibrary::MakeRotFromXZ(ULinkooTools::CaculReflectVector(GetActorForwardVector(), NearDoor->GetActorForwardVector()), ULinkooTools::CaculReflectVector(GetActorUpVector(), NearDoor->GetActorForwardVector())), ULinkooTools::CaculReflectLocation(GetActorLocation(), NearDoor->GetActorLocation(), NearDoor->GetActorForwardVector()), GetActorScale()),NearDoor->GetTransform(), NearDoor->GetTheOtherPortal()->GetTransform()));
+	CopyActor->SetActorTransform(ULinkooTools::CaculTransformForPortal(FTransform(UKismetMathLibrary::MakeRotFromXZ(UKismetMathLibrary::RotateAngleAxis(GetActorForwardVector(), 180.0f ,NearDoor->GetActorUpVector()), UKismetMathLibrary::RotateAngleAxis(GetActorUpVector(),180.0f, NearDoor->GetActorUpVector())), ULinkooTools::CaculReversOfAxis(GetActorLocation(), NearDoor->GetActorLocation(), NearDoor->GetActorUpVector()), GetActorScale()),NearDoor->GetTransform(), NearDoor->GetTheOtherPortal()->GetTransform()));
 }
 
-void AGameCube::OnSwitchMasterServant(AActor* CopyActor)
+void AGameCube::OnSwitchMasterServant(AActor* CopyActor, UPortalHelperComponent* PortalHelper)
 {
 	auto GameCharact = Cast<ALinkooPortalCharacter>(UGameplayStatics::GetPlayerPawn(this, 0));
-
+	PortalHelper->ActorsNearBlueDoor.Remove(this);
+	PortalHelper->ActorsNearRedDoor.Remove(this);
 	if (!GameCharact->IsActorEquelHandle(this))
 	{
 		SetActorTransform(CopyActor->GetTransform() );

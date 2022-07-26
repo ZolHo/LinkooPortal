@@ -51,12 +51,10 @@ void UPortalHelperComponent::TickComponent(float DeltaTime, ELevelTick TickType,
 
 void UPortalHelperComponent::SwitchMasterServant(AActor* MasterActor)
 {
-	ActorsNearBlueDoor.Remove(MasterActor);
-	ActorsNearRedDoor.Remove(MasterActor);
 
 	AActor* ServantActor = MasterServantMap[MasterActor];
 	
-	Cast<ICanEnterPortal>(MasterActor)->OnSwitchMasterServant(ServantActor);
+	Cast<ICanEnterPortal>(MasterActor)->OnSwitchMasterServant(ServantActor,this);
 }
 
 void UPortalHelperComponent::OnOuterOverlapBegin(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,

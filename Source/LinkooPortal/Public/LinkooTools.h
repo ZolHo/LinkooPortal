@@ -26,6 +26,10 @@ public:
 	static FVector CaculReflectVector(const FVector& VecA, const FVector& Normal);
 
 	UFUNCTION(BlueprintCallable)
+	// A点绕轴旋转180度后的点的坐标
+	static FVector CaculReversOfAxis(const FVector& LocA,const FVector& Ori,const FVector& AxisVector);
+	
+	UFUNCTION(BlueprintCallable)
 	// 用三者的世界变换计算Obj相对与A的关系转移到B的坐标系
 	static inline FTransform CaculTransformForPortal(const FTransform& Obj,const FTransform& A,const FTransform& B )
 	{
@@ -37,5 +41,11 @@ public:
 	{
 		return FVector::DotProduct(A->GetActorLocation() - B->GetActorLocation(), B->GetActorForwardVector()) > 0.0f;
 	}
+
+	static inline float DistantOfA2Face(const FVector& LocA,const FVector& Ori,const FVector& AxisVector)
+	{
+		FVector ChuiZu = Ori + FVector::DotProduct(LocA - Ori, AxisVector.GetSafeNormal()) * AxisVector.GetSafeNormal() ;
+		return (ChuiZu-LocA).Size();
+	};
 	
 };

@@ -29,7 +29,7 @@ public:
 
 	virtual void OnEnterPortalTick(APortalDoor* NearDoor, AActor* CopyActor) override;
 
-	virtual void OnSwitchMasterServant(AActor* CopyActor) override;
+	virtual void OnSwitchMasterServant(AActor* CopyActor, UPortalHelperComponent* PortalHelper) override;
 
 protected:
 	// Called when the game starts or when spawned

@@ -94,12 +94,18 @@ APortalDoor* APortalDoorManager::SpawnOrActiveDoor(EPortalDoorType dtype, FTrans
 void APortalDoorManager::UpdateViewTarget()
 {
 	auto PlayerCamera = Player->GetFirstPersonCameraComponent();
-	FVector BPWL = ULinkooTools::CaculReflectLocation(PlayerCamera->GetComponentLocation(), RedDoor->GetActorLocation(), RedDoor->GetActorForwardVector());
-	FVector RPWL = ULinkooTools::CaculReflectLocation(PlayerCamera->GetComponentLocation(), BlueDoor->GetActorLocation(), BlueDoor->GetActorForwardVector());
-	
-	FRotator BPWR = UKismetMathLibrary::MakeRotFromXZ(ULinkooTools::CaculReflectVector(PlayerCamera->GetForwardVector(), RedDoor->GetActorForwardVector()), ULinkooTools::CaculReflectVector(PlayerCamera->GetUpVector(), RedDoor->GetActorForwardVector()));
-	FRotator RPWR = UKismetMathLibrary::MakeRotFromXZ(ULinkooTools::CaculReflectVector(PlayerCamera->GetForwardVector(), BlueDoor->GetActorForwardVector()), ULinkooTools::CaculReflectVector(PlayerCamera->GetUpVector(), BlueDoor->GetActorForwardVector()));
+	// FVector BPWL = ULinkooTools::CaculReflectLocation(PlayerCamera->GetComponentLocation(), RedDoor->GetActorLocation(), RedDoor->GetActorForwardVector());
+	// FVector RPWL = ULinkooTools::CaculReflectLocation(PlayerCamera->GetComponentLocation(), BlueDoor->GetActorLocation(), BlueDoor->GetActorForwardVector());
+	//
+	// FRotator BPWR = UKismetMathLibrary::MakeRotFromXZ(ULinkooTools::CaculReflectVector(PlayerCamera->GetForwardVector(), RedDoor->GetActorForwardVector()), ULinkooTools::CaculReflectVector(PlayerCamera->GetUpVector(), RedDoor->GetActorForwardVector()));
+	// FRotator RPWR = UKismetMathLibrary::MakeRotFromXZ(ULinkooTools::CaculReflectVector(PlayerCamera->GetForwardVector(), BlueDoor->GetActorForwardVector()), ULinkooTools::CaculReflectVector(PlayerCamera->GetUpVector(), BlueDoor->GetActorForwardVector()));
 
+	FVector BPWL = ULinkooTools::CaculReversOfAxis(PlayerCamera->GetComponentLocation(), RedDoor->GetActorLocation(), RedDoor->GetActorUpVector());
+	FVector RPWL = ULinkooTools::CaculReversOfAxis(PlayerCamera->GetComponentLocation(), BlueDoor->GetActorLocation(), BlueDoor->GetActorUpVector());
+	
+	FRotator BPWR = UKismetMathLibrary::MakeRotFromXZ(UKismetMathLibrary::RotateAngleAxis(PlayerCamera->GetForwardVector(), 180.0f, RedDoor->GetActorUpVector()), UKismetMathLibrary::RotateAngleAxis(PlayerCamera->GetUpVector(), 180.0f, RedDoor->GetActorUpVector()));
+	FRotator RPWR = UKismetMathLibrary::MakeRotFromXZ(UKismetMathLibrary::RotateAngleAxis(PlayerCamera->GetForwardVector(), 180.0f, BlueDoor->GetActorUpVector()), UKismetMathLibrary::RotateAngleAxis(PlayerCamera->GetUpVector(), 180.0f, BlueDoor->GetActorUpVector()));
+	
 	FTransform TransBlue;
 	TransBlue.SetLocation(BPWL);
 	TransBlue.SetRotation(BPWR.Quaternion());
@@ -110,6 +116,8 @@ void APortalDoorManager::UpdateViewTarget()
 
 	BlueDoor->PortalViewCapture->SetWorldTransform(ULinkooTools::CaculTransformForPortal(TransBlue, RedDoor->GetActorTransform(), BlueDoor->GetActorTransform()));
 	RedDoor->PortalViewCapture->SetWorldTransform(ULinkooTools::CaculTransformForPortal(TransRed, BlueDoor->GetActorTransform(), RedDoor->GetActorTransform()));
+
+
 
 	// 设置裁剪平面
 	BlueDoor->PortalViewCapture->ClipPlaneBase = BlueDoor->GetActorLocation();

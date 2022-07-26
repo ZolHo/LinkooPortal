@@ -21,3 +21,8 @@ FVector ULinkooTools::CaculReflectVector(const FVector& VecA, const FVector& Nor
 	return VecA - 2 * FVector::DotProduct(VecA, Normal) * Normal;
 }
 
+FVector ULinkooTools::CaculReversOfAxis(const FVector& LocA,const FVector& Ori,const FVector& AxisVector)
+{
+	FVector ChuiZu = Ori + FVector::DotProduct(LocA - Ori, AxisVector.GetSafeNormal()) * AxisVector.GetSafeNormal()  ;
+	return LocA + 2 * ( ChuiZu - LocA);
+}
