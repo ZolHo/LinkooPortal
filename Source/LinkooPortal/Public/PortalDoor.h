@@ -58,7 +58,7 @@ public:
 
 	// 获取另一扇传送门，可能返回null
 	UFUNCTION(BlueprintCallable)
-	const APortalDoor* GetTheOtherPortal();
+	APortalDoor* GetTheOtherPortal();
 
 	// 获取传送门是否显示在游戏中的Active状态
 	UFUNCTION(BlueprintCallable)

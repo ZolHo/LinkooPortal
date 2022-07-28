@@ -17,6 +17,7 @@
 #include "PortalDoorManager.h"
 #include "LinkooPortal.h"
 #include "LinkooTools.h"
+#include "PortalWall.h"
 #include "Kismet/KismetMathLibrary.h"
 
 DEFINE_LOG_CATEGORY_STATIC(LogFPChar, Warning, All);
@@ -264,10 +265,7 @@ void ALinkooPortalCharacter::test()
 void ALinkooPortalCharacter::Tick(float DeltaSeconds)
 {
 	Super::Tick(DeltaSeconds);
-	// if(ChekIsBodyBias())
-	// {
-	// 	RecureCameraRot(DeltaSeconds);
-	// }
+
 
 	if (MyHandleComponent->GetGrabbedComponent())
 	{
@@ -286,6 +284,8 @@ void ALinkooPortalCharacter::Tick(float DeltaSeconds)
 			auto View = DoorWhichBetweenHandleActor->GetTheOtherPortal()->PortalViewCapture;
 			MyHandleComponent->SetTargetLocation(View->GetComponentLocation() + View->GetForwardVector() * 150.0);
 		}
+		MyHandleComponent->SetTargetRotation(UKismetMathLibrary::MakeRotFromXZ(FVector(1,0,0), FVector(0,0,1)));
+
 		bPreGrabMode = bGrabActorMode;
 	}
 }
@@ -328,7 +328,7 @@ void ALinkooPortalCharacter::Fire(EPortalDoorType dtype)
 		bool HitSuccess = UKismetSystemLibrary::LineTraceSingle(this, StartLocation, EndLocation, ETraceTypeQuery::TraceTypeQuery1, false,
 			IgnoreActors, EDrawDebugTrace::ForDuration, HitResult, true, FLinearColor::Red, FLinearColor::Green, 3.f);
 
-		if (HitSuccess)
+		if (HitSuccess  && Cast<APortalWall>(HitResult.Actor))
 		{
 			FTransform SpawnTransform;
 			FRotator SpawnRotator = UKismetMathLibrary::MakeRotFromXY(HitResult.Normal, FVector::CrossProduct(FVector(0, 0, 1) ,StartLocation-HitResult.Location));
@@ -449,24 +449,19 @@ void ALinkooPortalCharacter::OnOuterOverlapBegin(UPrimitiveComponent* Overlapped
 	{
 		PortalHelper->ActorsNearRedDoor.Add(this);
 	}
+
+	NowInDoor = Cast<APortalDoor>(OverlappedComponent->GetOwner());
 }
 
 void ALinkooPortalCharacter::OnOuterOverlapEnd(UPrimitiveComponent* OverlappedComponent,
 	UPortalHelperComponent* PortalHelper)
 {
-	if (ULinkooTools::AIsFrontOfB(this, OverlappedComponent->GetOwner()))
-	{
-		// 正面出去则是正常出
-		PortalHelper->ActorsNearRedDoor.Remove(this);
-		PortalHelper->ActorsNearBlueDoor.Remove(this);
-		if(PortalHelper->MasterServantMap[this]) PortalHelper->MasterServantMap[this]->SetActorHiddenInGame(true);
-		// GetCapsuleComponent()->SetCollisionResponseToChannel(ECC_GameTraceChannel3, ECR_Block);
-	}
-	else
-	{
-		
+	// 正面出去则是正常出
+	PortalHelper->ActorsNearRedDoor.Remove(this);
+	PortalHelper->ActorsNearBlueDoor.Remove(this);
+	if(PortalHelper->MasterServantMap[this]) PortalHelper->MasterServantMap[this]->SetActorHiddenInGame(true);
+	// GetCapsuleComponent()->SetCollisionResponseToChannel(ECC_GameTraceChannel3, ECR_Block);
 	
-	}
 	GetCapsuleComponent()->SetCollisionResponseToChannel(ECC_GameTraceChannel3, ECR_Block);
 }
 
@@ -478,14 +473,12 @@ void ALinkooPortalCharacter::OnInnerOverlapBegin(UPrimitiveComponent* Overlapped
 	
 	if (ULinkooTools::AIsFrontOfB(this, OverlappedComponent->GetOwner()))
 	{
-		PortalHelper->SwitchMasterServant(this);
-		NowInDoor = Cast<APortalDoor>(OverlappedComponent->GetOwner());
-	}
-	else
-	{
 		
+		PortalHelper->SwitchMasterServant(this);
+
 	}
-	
+
+	NowInDoor = Cast<APortalDoor>(OverlappedComponent->GetOwner());
 	
 }
 
@@ -500,6 +493,7 @@ void ALinkooPortalCharacter::OnInnerOverlapEnd(UPrimitiveComponent* OverlappedCo
 	{
 		
 	}
+	bNeedSwap = false;
 	// GetCapsuleComponent()->SetCollisionResponseToChannel(ECC_GameTraceChannel3, ECR_Block);
 }
 
@@ -511,12 +505,14 @@ void ALinkooPortalCharacter::OnEnterPortalTick(APortalDoor* NearDoor, AActor* Co
 	Cast<ALinkooPortalCharacter>(CopyActor)->GetFirstPersonCameraComponent()->SetWorldTransform(ULinkooTools::CaculTransformForPortal(FTransform(UKismetMathLibrary::MakeRotFromXZ(UKismetMathLibrary::RotateAngleAxis(GetFirstPersonCameraComponent()->GetForwardVector(), 180.0f ,NearDoor->GetActorUpVector()), UKismetMathLibrary::RotateAngleAxis(GetFirstPersonCameraComponent()->GetUpVector(),180.0f, NearDoor->GetActorUpVector())), ULinkooTools::CaculReversOfAxis(GetFirstPersonCameraComponent()->GetComponentLocation(), NearDoor->GetActorLocation(), NearDoor->GetActorUpVector())),NearDoor->GetTransform(), NearDoor->GetTheOtherPortal()->GetTransform()));
 	if (bNeedSwap)
 	{
-		
-		// GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::White, FString::Printf(TEXT("-- Test %f"), ULinkooTools::DistantOfA2Face(GetActorLocation(), NearDoor->GetActorLocation(), NearDoor->GetActorUpVector())));
-		if (ULinkooTools::DistantOfA2Face(GetFirstPersonCameraComponent()->GetComponentLocation(), NearDoor->GetActorLocation(), NearDoor->GetActorUpVector()) < 25.0f)
+		// GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::White, FString::Printf(TEXT("-- Test %s"), *NowInDoor->GetName()));
+		// GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::White, FString::Printf(TEXT("-- Test %f"), ULinkooTools::DistantOfA2Face(GetActorLocation(), NowInDoor->GetActorLocation(), NowInDoor->GetActorUpVector())));
+		if (ULinkooTools::DistantOfA2Face(GetFirstPersonCameraComponent()->GetComponentLocation(), NowInDoor->GetActorLocation(), NowInDoor->GetActorUpVector()) < 25.0f || !ULinkooTools::AIsFrontOfB(this, NowInDoor))
 		{
-			RealSwitch(PHC->MasterServantMap[this], PHC.Get());
+			
+
 			bNeedSwap = false;
+			RealSwitch(PHC->MasterServantMap[this], PHC.Get());
 		}
 	}
 }
@@ -539,22 +535,22 @@ void ALinkooPortalCharacter::RealSwitch(AActor* CopyActor, UPortalHelperComponen
 	{
 		ReversGrabMode();
 	}
-	SetActorLocation(CopyActor->GetActorLocation());
-	GetController()->SetControlRotation(Cast<ALinkooPortalCharacter>(CopyActor)->GetFirstPersonCameraComponent()->GetComponentRotation());
+	float Vel = this->GetVelocity().Size();
 
-	auto OtherDoor = NowInDoor->GetTheOtherPortal();
+	GetController()->SetControlRotation(Cast<ALinkooPortalCharacter>(CopyActor)->GetFirstPersonCameraComponent()->GetComponentRotation());
+	SetActorLocation(CopyActor->GetActorLocation() + CopyActor->GetActorForwardVector());
 	
-	if(FVector::DotProduct(OtherDoor->GetActorForwardVector(), FVector(0,0,1))> 0.9)
+	OnEnterPortalTick(NowInDoor, CopyActor);
+	
+	if(FVector::DotProduct(NowInDoor->GetActorForwardVector(), FVector(0,0,1))> 0.9)
 	{
-		// 门朝天时给个最小速度5m/s
-			
-		LaunchCharacter(FMath::Clamp(this->GetVelocity().Size(), 1000.0f ,100000.0f) * OtherDoor->GetActorForwardVector(), false, false);
+		LaunchCharacter(FMath::Clamp(Vel, 1000.0f ,100000.0f) * NowInDoor->GetActorForwardVector(), false, false);
 	}
 	else
 	{
-		LaunchCharacter(FMath::Clamp(this->GetVelocity().Size(), 0.0f ,100000.0f) * OtherDoor->GetActorForwardVector(), false, false);
+		LaunchCharacter(FMath::Clamp(Vel, 0.0f ,100000.0f) * NowInDoor->GetActorForwardVector(), false, false);
 	}
-	NowInDoor = (APortalDoor*) OtherDoor;
+	// NowInDoor = OtherDoor;
 }
 
 /**    ------------------------ 重载ICanEntryPortal END --------------------------       **/

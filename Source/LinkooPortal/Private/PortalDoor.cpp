@@ -58,7 +58,7 @@ void APortalDoor::BeginPlay()
 	SetDoorActive(false);
 }
 
-const APortalDoor* APortalDoor::GetTheOtherPortal()
+APortalDoor* APortalDoor::GetTheOtherPortal()
 {
 	return TheOtherDoor.Get();
 }
