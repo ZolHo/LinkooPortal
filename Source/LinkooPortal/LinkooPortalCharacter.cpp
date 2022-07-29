@@ -427,6 +427,7 @@ AActor* ALinkooPortalCharacter::SpawnCopyActor()
 void ALinkooPortalCharacter::OnOuterOverlapBegin(UPrimitiveComponent* OverlappedComponent,
 	UPortalHelperComponent* PortalHelper)
 {
+	GetCapsuleComponent()->SetCollisionResponseToChannel(ECC_GameTraceChannel3, ECR_Ignore);
 	AActor** ServantActorPtr = PortalHelper->MasterServantMap.Find(this);
 	if (ServantActorPtr)
 	{
@@ -469,9 +470,7 @@ void ALinkooPortalCharacter::OnInnerOverlapBegin(UPrimitiveComponent* Overlapped
 	UPortalHelperComponent* PortalHelper)
 {
 	
-	GetCapsuleComponent()->SetCollisionResponseToChannel(ECC_GameTraceChannel3, ECR_Ignore);
-	
-	if (ULinkooTools::AIsFrontOfB(this, OverlappedComponent->GetOwner()))
+	if (ULinkooTools::AIsFrontOfB(this->GetFirstPersonCameraComponent(), OverlappedComponent->GetOwner()))
 	{
 		
 		PortalHelper->SwitchMasterServant(this);
@@ -485,14 +484,7 @@ void ALinkooPortalCharacter::OnInnerOverlapBegin(UPrimitiveComponent* Overlapped
 void ALinkooPortalCharacter::OnInnerOverlapEnd(UPrimitiveComponent* OverlappedComponent,
 	UPortalHelperComponent* PortalHelper)
 {
-	if (ULinkooTools::AIsFrontOfB(this, OverlappedComponent->GetOwner()))
-	{
-		
-	}
-	else
-	{
-		
-	}
+	
 	bNeedSwap = false;
 	// GetCapsuleComponent()->SetCollisionResponseToChannel(ECC_GameTraceChannel3, ECR_Block);
 }
@@ -506,11 +498,9 @@ void ALinkooPortalCharacter::OnEnterPortalTick(APortalDoor* NearDoor, AActor* Co
 	if (bNeedSwap)
 	{
 		// GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::White, FString::Printf(TEXT("-- Test %s"), *NowInDoor->GetName()));
-		// GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::White, FString::Printf(TEXT("-- Test %f"), ULinkooTools::DistantOfA2Face(GetActorLocation(), NowInDoor->GetActorLocation(), NowInDoor->GetActorUpVector())));
-		if (ULinkooTools::DistantOfA2Face(GetFirstPersonCameraComponent()->GetComponentLocation(), NowInDoor->GetActorLocation(), NowInDoor->GetActorUpVector()) < 25.0f || !ULinkooTools::AIsFrontOfB(this, NowInDoor))
+		// GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::White, FString::Printf(TEXT("-- Test %f"), ULinkooTools::DistantOfA2Face(GetFirstPersonCameraComponent()->GetComponentLocation(), NowInDoor->GetActorLocation(), NowInDoor->GetActorUpVector())));
+		if (ULinkooTools::DistantOfA2Face(GetFirstPersonCameraComponent()->GetComponentLocation(), NowInDoor->GetActorLocation(), NowInDoor->GetActorUpVector()) < 60.0f || !ULinkooTools::AIsFrontOfB(GetFirstPersonCameraComponent(), NowInDoor))
 		{
-			
-
 			bNeedSwap = false;
 			RealSwitch(PHC->MasterServantMap[this], PHC.Get());
 		}
@@ -524,7 +514,6 @@ void ALinkooPortalCharacter::OnSwitchMasterServant(AActor* CopyActor, UPortalHel
 	PHC = PortalHelper;
 	// SetActorLocation(CopyActor->GetActorLocation());
 	// GetController()->SetControlRotation(Cast<ALinkooPortalCharacter>(CopyActor)->GetFirstPersonCameraComponent()->GetComponentRotation());
-	
 }
 
 void ALinkooPortalCharacter::RealSwitch(AActor* CopyActor, UPortalHelperComponent* PortalHelper)
@@ -538,17 +527,17 @@ void ALinkooPortalCharacter::RealSwitch(AActor* CopyActor, UPortalHelperComponen
 	float Vel = this->GetVelocity().Size();
 
 	GetController()->SetControlRotation(Cast<ALinkooPortalCharacter>(CopyActor)->GetFirstPersonCameraComponent()->GetComponentRotation());
-	SetActorLocation(CopyActor->GetActorLocation() + CopyActor->GetActorForwardVector());
-	
+	SetActorLocation(CopyActor->GetActorLocation() );
+	bNeedSwap = false;
 	OnEnterPortalTick(NowInDoor, CopyActor);
 	
 	if(FVector::DotProduct(NowInDoor->GetActorForwardVector(), FVector(0,0,1))> 0.9)
 	{
-		LaunchCharacter(FMath::Clamp(Vel, 1000.0f ,100000.0f) * NowInDoor->GetActorForwardVector(), false, false);
+		LaunchCharacter(FMath::Clamp(Vel, 800.0f ,8000.0f) * NowInDoor->GetActorForwardVector() , true, true);
 	}
 	else
 	{
-		LaunchCharacter(FMath::Clamp(Vel, 0.0f ,100000.0f) * NowInDoor->GetActorForwardVector(), false, false);
+		LaunchCharacter(FMath::Clamp(Vel, 0.0f ,8000.0f) * NowInDoor->GetActorForwardVector() *1.1f, true, true);
 	}
 	// NowInDoor = OtherDoor;
 }

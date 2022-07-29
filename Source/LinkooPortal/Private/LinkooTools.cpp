@@ -26,3 +26,10 @@ FVector ULinkooTools::CaculReversOfAxis(const FVector& LocA,const FVector& Ori,c
 	FVector ChuiZu = Ori + FVector::DotProduct(LocA - Ori, AxisVector.GetSafeNormal()) * AxisVector.GetSafeNormal()  ;
 	return LocA + 2 * ( ChuiZu - LocA);
 }
+
+FVector ULinkooTools::CaculRelativeLocationFromA2B(FVector Loc, AActor* A, AActor* B)
+{
+	FVector RelativVector = Loc - A->GetActorLocation();
+	return B->GetActorRotation().RotateVector(A->GetActorRotation().UnrotateVector(RelativVector));
+	
+}

@@ -26,7 +26,8 @@ void UPortalHelperComponent::BeginPlay()
 	Super::BeginPlay();
 	// 使用Delay让PDM先初始化完再获得它，故在InitialPDM结束前，是没有Overlap事件的
 	GetWorld()->GetTimerManager().SetTimer(DelayTimerHandle, this, &UPortalHelperComponent::InitialPDM, 1.0f, true);
-	
+
+	MasterServantMap.Add(UGameplayStatics::GetPlayerCharacter(this, 0),Cast<ICanEnterPortal>(UGameplayStatics::GetPlayerCharacter(this, 0))->SpawnCopyActor());
 }
 
 
@@ -52,9 +53,16 @@ void UPortalHelperComponent::TickComponent(float DeltaTime, ELevelTick TickType,
 void UPortalHelperComponent::SwitchMasterServant(AActor* MasterActor)
 {
 
-	AActor* ServantActor = MasterServantMap[MasterActor];
-	
-	Cast<ICanEnterPortal>(MasterActor)->OnSwitchMasterServant(ServantActor,this);
+	AActor* ServantActor = nullptr;
+	if(MasterActor)
+	{
+		if (MasterServantMap.Find(MasterActor))
+		{
+			ServantActor = MasterServantMap[MasterActor];
+			Cast<ICanEnterPortal>(MasterActor)->OnSwitchMasterServant(ServantActor,this);	
+		}
+	}
+
 }
 
 void UPortalHelperComponent::OnOuterOverlapBegin(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
