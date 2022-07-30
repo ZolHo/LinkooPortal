@@ -318,9 +318,11 @@ void ALinkooPortalCharacter::Fire(EPortalDoorType dtype)
 		// Ignore Array
 		TArray<AActor*> IgnoreActors;
 		IgnoreActors.Add(this);
-	
-		IgnoreActors.Add(PDM->BlueDoor.Get());
-		IgnoreActors.Add(PDM->RedDoor.Get());
+
+		if (dtype==Blue)
+			IgnoreActors.Add(PDM->BlueDoor.Get());
+		else 
+			IgnoreActors.Add(PDM->RedDoor.Get());
 		
 		FHitResult HitResult;
 		
