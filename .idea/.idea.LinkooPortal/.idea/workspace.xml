@@ -10,38 +10,9 @@
   <component name="ChangeListManager">
     <list default="true" id="0c310649-fdb3-4c81-b55f-cef3cad564d1" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/.idea.LinkooPortal/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.LinkooPortal/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Config/DefaultEngine.ini" beforeDir="false" afterPath="$PROJECT_DIR$/Config/DefaultEngine.ini" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Config/DefaultGame.ini" beforeDir="false" afterPath="$PROJECT_DIR$/Config/DefaultGame.ini" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/BluePrint/BP_PortalDoor.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/BluePrint/BP_PortalDoor.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/BluePrint/BP_PortalDoorManager.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/BluePrint/BP_PortalDoorManager.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/BluePrint/ButtonSystem/LightLine.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/BluePrint/ButtonSystem/LightLine.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/BluePrint/ButtonSystem/TriggerButton.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/BluePrint/ButtonSystem/TriggerButton.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/BluePrint/ButtonSystem/TriggerDoor.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/BluePrint/ButtonSystem/TriggerDoor.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/BluePrint/HUD/HUD.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/BluePrint/BP_PortalGM.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/BluePrint/BP_PortalGM.uasset" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Content/BluePrint/HUD/UI_HomeMenu.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/BluePrint/HUD/UI_HomeMenu.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/BluePrint/HUD/Widget_Level.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/BluePrint/LaserSystem/LaserReceiver.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/BluePrint/LaserSystem/LaserReceiver.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/BluePrint/LaserSystem/LaserShooter.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/BluePrint/LaserSystem/LaserShooter.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/BluePrint/LaserSystem/LaserTrigger.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/BluePrint/LaserSystem/LaserTrigger.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/BluePrint/LaserSystem/RefactCube.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/BluePrint/LaserSystem/RefactCube.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/BluePrint/Level/FirstPersonExampleMap.umap" beforeDir="false" afterPath="$PROJECT_DIR$/Content/BluePrint/Level/FirstPersonExampleMap.umap" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/BluePrint/Level/HomeMenu.umap" beforeDir="false" afterPath="$PROJECT_DIR$/Content/BluePrint/Level/HomeMenu.umap" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/BluePrint/Level/Level1.umap" beforeDir="false" afterPath="$PROJECT_DIR$/Content/BluePrint/Level/Level1.umap" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/BluePrint/PublicActor/ActorGener.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/BluePrint/PublicActor/ActorGener.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/BluePrint/PublicActor/BP_GameCube.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/BluePrint/PublicActor/BP_GameCube.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/BluePrint/PublicActor/Elevator.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/BluePrint/PublicActor/Elevator.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/BluePrint/PublicActor/Platform.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/BluePrint/PublicActor/Platform.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/BluePrint/PublicActor/SplineJumpBoard.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/BluePrint/PublicActor/SplineJumpBoard.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/FirstPersonCPP/Blueprints/FirstPersonCharacter.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/FirstPersonCPP/Blueprints/FirstPersonCharacter.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/MaterialSource/ArmPlate/arm_interior_192.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/MaterialSource/ArmPlate/arm_interior_192.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/MaterialSource/MyMaterials/TargetBlue.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/MaterialSource/MyMaterials/TargetBlue.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/MaterialSource/MyMaterials/TargetRed.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/MaterialSource/MyMaterials/TargetRed.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/StarterContent/Particles/Materials/M_Radial_Gradient.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/StarterContent/Particles/Materials/M_Radial_Gradient.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/LinkooPortal/LinkooPortalCharacter.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/LinkooPortal/LinkooPortalCharacter.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/LinkooPortal/LinkooPortalCharacter.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/LinkooPortal/LinkooPortalCharacter.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/LinkooPortal/Private/GameCube.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/LinkooPortal/Private/GameCube.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/LinkooPortal/Private/PortalDoorManager.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/LinkooPortal/Private/PortalDoorManager.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/LinkooPortal/Public/PortalDoorManager.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/LinkooPortal/Public/PortalDoorManager.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/BluePrint/Level/Level4.umap" beforeDir="false" afterPath="$PROJECT_DIR$/Content/BluePrint/Level/Level4.umap" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -402,7 +373,7 @@
       <workItem from="1659174015357" duration="7483000" />
       <workItem from="1659243693967" duration="19016000" />
       <workItem from="1659331354548" duration="184000" />
-      <workItem from="1659337269630" duration="2140000" />
+      <workItem from="1659337269630" duration="3374000" />
     </task>
     <task id="LOCAL-00001" summary="day 20 组件基本完成，准备做地图和优化">
       <created>1659170001525</created>
@@ -418,7 +389,21 @@
       <option name="project" value="LOCAL" />
       <updated>1659173173693</updated>
     </task>
-    <option name="localTasksCounter" value="3" />
+    <task id="LOCAL-00003" summary="day 21">
+      <created>1659351892609</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1659351892609</updated>
+    </task>
+    <task id="LOCAL-00004" summary="day 22.">
+      <created>1659351914481</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1659351914481</updated>
+    </task>
+    <option name="localTasksCounter" value="5" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -444,6 +429,8 @@
     <option name="CLEAR_INITIAL_COMMIT_MESSAGE" value="true" />
     <MESSAGE value="day 20 组件基本完成，准备做地图和优化" />
     <MESSAGE value="。。。" />
-    <option name="LAST_COMMIT_MESSAGE" value="。。。" />
+    <MESSAGE value="day 21" />
+    <MESSAGE value="day 22." />
+    <option name="LAST_COMMIT_MESSAGE" value="day 22." />
   </component>
 </project>
