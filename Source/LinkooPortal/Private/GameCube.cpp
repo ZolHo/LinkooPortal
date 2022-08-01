@@ -102,7 +102,7 @@ void AGameCube::OnOuterOverlapEnd(UPrimitiveComponent* OverlappedComponent, UPor
 		if(FVector::DotProduct(OtherDoor->GetActorForwardVector(), FVector(0,0,1))> 0.9)
 		{
 			// 门朝天时给个最小速度5m/s
-			this->FindComponentByClass<UPrimitiveComponent>()->SetPhysicsLinearVelocity(FMath::Clamp(this->GetVelocity().Size(), 500.0f ,4500.0f) * OtherDoor->GetActorForwardVector());
+			this->FindComponentByClass<UPrimitiveComponent>()->SetPhysicsLinearVelocity(FMath::Clamp(this->GetVelocity().Size(), 300.0f ,4500.0f) * OtherDoor->GetActorForwardVector());
 		}
 		else
 		{
@@ -138,7 +138,7 @@ void AGameCube::OnSwitchMasterServant(AActor* CopyActor, UPortalHelperComponent*
 	}
 	else
 	{
-		SetActorRotation(CopyActor->GetActorRotation());
 		GameCharact->ReversGrabMode();
+
 	}
 }

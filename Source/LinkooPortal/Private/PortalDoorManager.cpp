@@ -131,3 +131,9 @@ bool APortalDoorManager::IsAllReady()
 	if (BlueDoor.IsValid() && RedDoor.IsValid() && BlueDoor->IsActive() && RedDoor->IsActive()) return true;
 	return false;
 }
+
+void APortalDoorManager::CleanDoors()
+{
+	BlueDoor->SetDoorActive(false);
+	RedDoor->SetDoorActive(false);
+}

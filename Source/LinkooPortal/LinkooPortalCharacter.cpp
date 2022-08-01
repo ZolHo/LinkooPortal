@@ -67,6 +67,8 @@ ALinkooPortalCharacter::ALinkooPortalCharacter()
 	GunOffset = FVector(100.0f, 0.0f, 10.0f);
 
 	MyHandleComponent = CreateDefaultSubobject<UPhysicsHandleComponent> (TEXT("PhyicsHandle"));
+	MyHandleComponent->bRotationConstrained = true;
+	// MyHandleComponent->SetInterpolationSpeed(1000000.0f);
 	
 }
 
@@ -98,8 +100,6 @@ void ALinkooPortalCharacter::SetupPlayerInputComponent(class UInputComponent* Pl
 
 	// 绑定拾取按键
 	PlayerInputComponent->BindAction("PressE", IE_Pressed, this, &ALinkooPortalCharacter::GrabObject);
-
-	PlayerInputComponent->BindAction("Test", IE_Pressed, this, &ALinkooPortalCharacter::test);
 	
 	// Bind movement events
 	PlayerInputComponent->BindAxis("MoveForward", this, &ALinkooPortalCharacter::MoveForward);
@@ -172,9 +172,9 @@ void ALinkooPortalCharacter::ReleaseHandleActor()
 	MyHandleComponent->ReleaseComponent();
 
 	bIsGrabObj = false;
-	SetActorTickEnabled(false);
+
 	SetGrabMode(true);
-	MyHandleComponent->bInterpolateTarget = true;
+	// MyHandleComponent->bInterpolateTarget = true;
 }
 
 void ALinkooPortalCharacter::TraceAndGrabActor()
@@ -200,19 +200,21 @@ void ALinkooPortalCharacter::TraceAndGrabActor()
     	if (Cast<ICanBeGrab> (HitResult.GetActor()))
     	{
     		SetGrabMode(true);
-    		MyHandleComponent->GrabComponentAtLocation(HitResult.GetComponent(), FName(""), HitResult.GetComponent()->GetCenterOfMass());
-    		HitResult.GetComponent()->SetCollisionResponseToChannel(ECollisionChannel::ECC_Pawn, ECollisionResponse::ECR_Ignore);
-    		
-    		bIsGrabObj = true;
-    		SetActorTickEnabled(true);
+    		// MyHandleComponent->GrabComponentAtLocation(HitResult.GetComponent(), FName(""), HitResult.GetComponent()->GetCenterOfMass());
+    		FVector MineXVector = GetFirstPersonCameraComponent()->GetRightVector()*-1.0f;
+    		MineXVector.Z = 0.f;
+            MyHandleComponent->GrabComponentAtLocationWithRotation(HitResult.GetComponent(), FName(""), HitResult.GetComponent()->GetCenterOfMass(), UKismetMathLibrary::MakeRotFromXZ(MineXVector, FVector(0,0,1)));
+            HitResult.GetComponent()->SetCollisionResponseToChannel(ECollisionChannel::ECC_Pawn, ECollisionResponse::ECR_Ignore);
+
+            bIsGrabObj = true;
     		MyHandleComponent->bInterpolateTarget = false;
     	}
     	else if( Cast<APortalDoor>(HitResult.GetActor()))
     	{
     		// 如果人物想穿墙拿东西，则需要从对面门的摄像机发出穿透门的光线
-    		DoorWhichBetweenHandleActor = Cast<APortalDoor>(HitResult.GetActor());
-    		StartLocation = DoorWhichBetweenHandleActor->GetTheOtherPortal()->PortalViewCapture->GetComponentLocation();
-    		EndLocation = StartLocation + 300 * DoorWhichBetweenHandleActor->GetTheOtherPortal()->PortalViewCapture->GetForwardVector();
+    		// DoorWhichBetweenHandleActor = Cast<APortalDoor>(HitResult.GetActor());
+    		StartLocation = NowInDoor->GetTheOtherPortal()->PortalViewCapture->GetComponentLocation();
+    		EndLocation = StartLocation + 300 * NowInDoor->GetTheOtherPortal()->PortalViewCapture->GetForwardVector();
     		FHitResult PortalHitResult;
     		HitSuccess = UKismetSystemLibrary::LineTraceSingle(this, StartLocation, EndLocation, UEngineTypes::ConvertToTraceType(ECollisionChannel::ECC_OnlyCanGrab), false,
 		IgnoreActors, EDrawDebugTrace::ForDuration, PortalHitResult, true, FLinearColor::Red, FLinearColor::Green, 5.f);
@@ -220,47 +222,17 @@ void ALinkooPortalCharacter::TraceAndGrabActor()
     		{
     			// 更改handle 模式为穿墙持有
     			SetGrabMode(false);
-    			
-    			MyHandleComponent->GrabComponentAtLocation(PortalHitResult.GetComponent(), FName(""), PortalHitResult.GetComponent()->GetCenterOfMass());
+    			FVector MineXVector = NowInDoor->GetTheOtherPortal()->PortalViewCapture->GetRightVector() * -1.f;
+    			MineXVector.Z = 0.f;
+    			MyHandleComponent->GrabComponentAtLocationWithRotation(PortalHitResult.GetComponent(), FName(""), PortalHitResult.GetComponent()->GetCenterOfMass(),UKismetMathLibrary::MakeRotFromXZ(MineXVector, FVector(0,0,1)));
     			PortalHitResult.GetComponent()->SetCollisionResponseToChannel(ECollisionChannel::ECC_Pawn, ECollisionResponse::ECR_Ignore);
     		
     			bIsGrabObj = true;
-    			SetActorTickEnabled(true);
     			MyHandleComponent->bInterpolateTarget = false;
     		}
     		
     	}
     }
-}
-
-void ALinkooPortalCharacter::RecastDoorBetweenPawnAndObject()
-{
-	FVector StartLocation;
-	FVector EndLocation;
-	FVector CameraForwardVector = UKismetMathLibrary::GetForwardVector(GetFirstPersonCameraComponent()->GetComponentRotation());
-	StartLocation = GetFirstPersonCameraComponent()->GetComponentLocation();
-
-	TArray<AActor*> IgnoreActors;
-	IgnoreActors.Add(this);
-    
-	FHitResult HitResult;
-    
-	EndLocation = StartLocation + 300 * CameraForwardVector;
-
-	bool HitSuccess = UKismetSystemLibrary::LineTraceSingle(this, StartLocation, EndLocation, UEngineTypes::ConvertToTraceType(ECC_Camera), false,
-		IgnoreActors, EDrawDebugTrace::ForDuration, HitResult, true, FLinearColor::Red, FLinearColor::Green, 5.f);
-	if (HitSuccess)
-	{
-		if(auto TempPtr = Cast<APortalDoor>(HitResult.Actor))
-		{
-			DoorWhichBetweenHandleActor = TempPtr;
-		}
-	}
-}
-
-void ALinkooPortalCharacter::test()
-{
-
 }
 
 void ALinkooPortalCharacter::Tick(float DeltaSeconds)
@@ -273,37 +245,50 @@ void ALinkooPortalCharacter::Tick(float DeltaSeconds)
 		if (bPreGrabMode != bGrabActorMode)
 		{
 			SetHandleNoCollisionUntilNextFrame();
+			bPreGrabMode = bGrabActorMode;
+
 		}
 		
 		if (bGrabActorMode)
 		{
-			MyHandleComponent->SetTargetLocation(GetFirstPersonCameraComponent()->GetComponentLocation() + GetFirstPersonCameraComponent()->GetForwardVector() * 150.0);	
+			FVector MineXVector = GetFirstPersonCameraComponent()->GetRightVector() * -1.0f;
+			MineXVector.Z = 0.f;
+			auto TempRotation = UKismetMathLibrary::MakeRotFromXZ(MineXVector, FVector(0,0,1));
+
+			MyHandleComponent->SetTargetLocationAndRotation(GetFirstPersonCameraComponent()->GetComponentLocation() + GetFirstPersonCameraComponent()->GetForwardVector() * 150.0, TempRotation);
+			// MyHandleComponent->GetGrabbedComponent()->SetWorldLocation(GetFirstPersonCameraComponent()->GetComponentLocation() + GetFirstPersonCameraComponent()->GetForwardVector() * 150.0);
+			// auto TempTransofm = FTransform(TempRotation.Quaternion(), GetFirstPersonCameraComponent()->GetComponentLocation() + GetFirstPersonCameraComponent()->GetForwardVector() * 150.0, FVector(1,1,1));
+			// MyHandleComponent->GetGrabbedComponent()->GetBodyInstance()->SetBodyTransform(TempTransofm, ETeleportType::ResetPhysics);
+			// MyHandleComponent->CurrentTransform = TempTransofm;
+			// MyHandleComponent->TargetTransform = TempTransofm;
 		}
 		else
 		{
-			check(DoorWhichBetweenHandleActor.IsValid());
-			auto View = DoorWhichBetweenHandleActor->GetTheOtherPortal()->PortalViewCapture;
-			MyHandleComponent->SetTargetLocation(View->GetComponentLocation() + View->GetForwardVector() * 150.0);
+			
+			auto View = NowInDoor->GetTheOtherPortal()->PortalViewCapture;
+			FVector MineXVector = View->GetRightVector() * -1.f;
+			MineXVector.Z = 0.f;
+			FTransform TempTransform;
+			auto TempRotation = UKismetMathLibrary::MakeRotFromXZ(MineXVector, FVector(0,0,1));
+			TempTransform.SetRotation(TempRotation.Quaternion());
+			TempTransform.SetLocation(View->GetComponentLocation() + View->GetForwardVector() * 150.0);
+			// MyHandleComponent->SetTargetLocation(View->GetComponentLocation() + View->GetForwardVector() * 150.0);
+			// MyHandleComponent->GetGrabbedComponent()->GetBodyInstance()->SetBodyTransform(TempTransform, ETeleportType::ResetPhysics);
+			MyHandleComponent->SetTargetLocationAndRotation(View->GetComponentLocation() + View->GetForwardVector() * 150.0, TempRotation );
+			
 		}
-		MyHandleComponent->SetTargetRotation(UKismetMathLibrary::MakeRotFromXZ(FVector(1,0,0), FVector(0,0,1)));
-
-		bPreGrabMode = bGrabActorMode;
 	}
 }
 
 void ALinkooPortalCharacter::ReversGrabMode()
 {
-	SetGrabMode(!bGrabActorMode);
+	bGrabActorMode = !bGrabActorMode;
 }
 
 void ALinkooPortalCharacter::SetGrabMode(bool Mode)
 {
 	bGrabActorMode = Mode;
-	if (bGrabActorMode == false)
-	{
-		RecastDoorBetweenPawnAndObject();
-	}
-
+	bPreGrabMode = Mode;
 }
 
 void ALinkooPortalCharacter::Fire(EPortalDoorType dtype)
@@ -372,8 +357,9 @@ void ALinkooPortalCharacter::SetHandleNoCollisionUntilNextFrame()
 {
 	if (MyHandleComponent->GetGrabbedComponent())
 	{
+		// MyHandleComponent->GetGrabbedComponent()->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
 		MyHandleComponent->GetGrabbedComponent()->GetOwner()->SetActorEnableCollision(false);
-		GetWorld()->GetTimerManager().SetTimer(SetHandleCollisionTimerHandle, this, &ALinkooPortalCharacter::ExecuteTimer, 0.01f, true);
+		GetWorld()->GetTimerManager().SetTimer(SetHandleCollisionTimerHandle, this, &ALinkooPortalCharacter::ExecuteTimer, 0.001f, true);
 	}
 }
 
@@ -381,6 +367,7 @@ void ALinkooPortalCharacter::ExecuteTimer()
 {
 	if (MyHandleComponent->GetGrabbedComponent())
 	{
+		// MyHandleComponent->GetGrabbedComponent()->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
 		MyHandleComponent->GetGrabbedComponent()->GetOwner()->SetActorEnableCollision(true);
 		GetWorld()->GetTimerManager().ClearTimer(SetHandleCollisionTimerHandle);
 	}
@@ -412,6 +399,11 @@ void ALinkooPortalCharacter::RecureCameraRot(float DeltaSeconds)
 	GetController()->SetControlRotation(Temp);
 }
 
+void ALinkooPortalCharacter::CleanDoor()
+{
+	PDM->CleanDoors();
+}
+
 /**    ------------------------ 重载ICanEntryPortal --------------------------       **/
 
 
@@ -430,7 +422,7 @@ AActor* ALinkooPortalCharacter::SpawnCopyActor()
 void ALinkooPortalCharacter::OnOuterOverlapBegin(UPrimitiveComponent* OverlappedComponent,
 	UPortalHelperComponent* PortalHelper)
 {
-	GetCapsuleComponent()->SetCollisionResponseToChannel(ECC_GameTraceChannel3, ECR_Ignore);
+	// GetCapsuleComponent()->SetCollisionResponseToChannel(ECC_GameTraceChannel3, ECR_Ignore);
 	AActor** ServantActorPtr = PortalHelper->MasterServantMap.Find(this);
 	if (ServantActorPtr)
 	{
@@ -439,7 +431,7 @@ void ALinkooPortalCharacter::OnOuterOverlapBegin(UPrimitiveComponent* Overlapped
 	else
 	{
 		AActor* ServantActor =  SpawnCopyActor();
-	
+		
 		PortalHelper->AllCopyActors.Add(ServantActor);
 		PortalHelper->MasterServantMap.Add(this, ServantActor);
 	}
@@ -454,7 +446,8 @@ void ALinkooPortalCharacter::OnOuterOverlapBegin(UPrimitiveComponent* Overlapped
 		PortalHelper->ActorsNearRedDoor.Add(this);
 	}
 
-	NowInDoor = Cast<APortalDoor>(OverlappedComponent->GetOwner());
+	// NowInDoor = Cast<APortalDoor>(OverlappedComponent->GetOwner());
+	// DoorWhichBetweenHandleActor = NowInDoor;
 }
 
 void ALinkooPortalCharacter::OnOuterOverlapEnd(UPrimitiveComponent* OverlappedComponent,
@@ -472,15 +465,13 @@ void ALinkooPortalCharacter::OnOuterOverlapEnd(UPrimitiveComponent* OverlappedCo
 void ALinkooPortalCharacter::OnInnerOverlapBegin(UPrimitiveComponent* OverlappedComponent,
 	UPortalHelperComponent* PortalHelper)
 {
-	
+	GetCapsuleComponent()->SetCollisionResponseToChannel(ECC_GameTraceChannel3, ECR_Ignore);
 	if (ULinkooTools::AIsFrontOfB(this->GetFirstPersonCameraComponent(), OverlappedComponent->GetOwner()))
-	{
-		
+	{ 
 		PortalHelper->SwitchMasterServant(this);
-
 	}
 
-	NowInDoor = Cast<APortalDoor>(OverlappedComponent->GetOwner());
+	// NowInDoor = Cast<APortalDoor>(OverlappedComponent->GetOwner());
 	
 }
 
@@ -523,16 +514,18 @@ void ALinkooPortalCharacter::RealSwitch(AActor* CopyActor, UPortalHelperComponen
 {
 	PortalHelper->ActorsNearBlueDoor.Remove(this);
 	PortalHelper->ActorsNearRedDoor.Remove(this);
-	if (bIsGrabObj)
-	{
-		ReversGrabMode();
-	}
+	
 	float Vel = this->GetVelocity().Size();
 
 	GetController()->SetControlRotation(Cast<ALinkooPortalCharacter>(CopyActor)->GetFirstPersonCameraComponent()->GetComponentRotation());
 	SetActorLocation(CopyActor->GetActorLocation() );
 	bNeedSwap = false;
 	OnEnterPortalTick(NowInDoor, CopyActor);
+
+	if (bIsGrabObj)
+	{
+		ReversGrabMode();
+	}
 	
 	if(FVector::DotProduct(NowInDoor->GetActorForwardVector(), FVector(0,0,1))> 0.9)
 	{
@@ -542,7 +535,7 @@ void ALinkooPortalCharacter::RealSwitch(AActor* CopyActor, UPortalHelperComponen
 	{
 		LaunchCharacter(FMath::Clamp(Vel, 0.0f ,8000.0f) * NowInDoor->GetActorForwardVector() *1.1f, true, true);
 	}
-	// NowInDoor = OtherDoor;
+	
 }
 
 /**    ------------------------ 重载ICanEntryPortal END --------------------------       **/

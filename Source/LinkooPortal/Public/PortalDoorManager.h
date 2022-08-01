@@ -71,4 +71,6 @@ public:
 	// 返回是否两个传送门都是激活状态
 	UFUNCTION(BlueprintCallable)
 	bool IsAllReady();
+
+	void CleanDoors();
 };

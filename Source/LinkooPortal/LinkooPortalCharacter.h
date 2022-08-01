@@ -51,13 +51,14 @@ public:
 
 	void SetGrabMode(bool Mode);
 
-	// 计算人面前的门
-	void RecastDoorBetweenPawnAndObject();
+	// // 计算人面前的门
+	// void RecastDoorBetweenPawnAndObject();
 	
 protected:
 	virtual void BeginPlay();
 
 	// 计算手持物品的位置模式，true为普通射线检测，false为传送门中转模式
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 	bool bGrabActorMode = true;
 
 	// 保存人面前的那扇门用于抓取Actor
@@ -102,6 +103,7 @@ public:
 	bool bIsGrabObj = false;
 
 	// 松手，主动松手和被阻挡时自动松手
+	UFUNCTION(BlueprintCallable)
 	void ReleaseHandleActor();
 
 	// 抓东西，考虑穿墙和不穿墙两种方式
@@ -116,9 +118,11 @@ public:
 	// 是否需要传送
 	bool bNeedSwap = false;
 	TWeakObjectPtr<UPortalHelperComponent> PHC;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	APortalDoor* NowInDoor;
 	void RealSwitch(AActor* CopyActor, UPortalHelperComponent* PortalHelper);
 	// 比较是不是手上拿的Actor
+	UFUNCTION(BlueprintCallable, BlueprintPure)
 	bool IsActorEquelHandle(AActor* TheActor);
 
 	//检查是否倾斜
@@ -127,6 +131,10 @@ public:
 	// // 恢复摄像机的旋转
 	UFUNCTION(BlueprintCallable)
 	void RecureCameraRot(float DeltaSeconds) ;
+
+	// 清除传送门
+	UFUNCTION(BlueprintCallable)
+	void CleanDoor();
 protected:
 
 	// 左键蓝门
@@ -159,7 +167,7 @@ protected:
 	// 真正的开传送枪
 	void Fire(EPortalDoorType dtype);
 
-	void test();
+	// void test();
 	
 protected:
 	// APawn interface
