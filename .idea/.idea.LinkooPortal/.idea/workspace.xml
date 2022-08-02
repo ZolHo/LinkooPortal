@@ -10,11 +10,10 @@
   <component name="ChangeListManager">
     <list default="true" id="0c310649-fdb3-4c81-b55f-cef3cad564d1" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/.idea.LinkooPortal/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.LinkooPortal/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Config/DefaultGame.ini" beforeDir="false" afterPath="$PROJECT_DIR$/Config/DefaultGame.ini" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/BluePrint/HUD/UI_HomeMenu.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/BluePrint/HUD/UI_HomeMenu.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/BluePrint/HUD/Widget_LevelButton.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/BluePrint/HUD/Widget_LevelButton.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/MaterialSource/MyMaterials/M_Frame_Blue.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/MaterialSource/MyMaterials/M_Frame_Blue.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/MaterialSource/MyMaterials/M_Frame_Red.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/MaterialSource/MyMaterials/M_Frame_Red.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/BluePrint/Level/HomeMenu.umap" beforeDir="false" afterPath="$PROJECT_DIR$/Content/BluePrint/Level/HomeMenu.umap" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/BluePrint/Level/Level2.umap" beforeDir="false" afterPath="$PROJECT_DIR$/Content/BluePrint/Level/Level2.umap" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/BluePrint/Level/Level3.umap" beforeDir="false" afterPath="$PROJECT_DIR$/Content/BluePrint/Level/Level3.umap" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/BluePrint/Level/Level4.umap" beforeDir="false" afterPath="$PROJECT_DIR$/Content/BluePrint/Level/Level4.umap" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -22,14 +21,31 @@
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
   <component name="HighlightingSettingsPerFile">
-    <setting file="file://$PROJECT_DIR$/../../Program Files/Epic Games/UE_4.27/Engine/Source/ThirdParty/PhysX3/PhysX_3.4/Include/PxActor.h" root0="SKIP_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/../../Program Files/Epic Games/UE_4.27/Engine/Source/ThirdParty/PhysX3/PxShared/include/foundation/PxTransform.h" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/../../../Program Files/UE_4.27/Engine/Plugins/Developer/RiderLink/Source/RD/thirdparty/clsocket/src/ActiveSocket.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/../../../Program Files/UE_4.27/Engine/Plugins/Developer/RiderLink/Source/RD/thirdparty/ordered-map/include/tsl/ordered_map.h" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/../../../Program Files/UE_4.27/Engine/Plugins/Developer/RiderLink/Source/RD/thirdparty/spdlog/include/spdlog/common-inl.h" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/../../../Program Files/UE_4.27/Engine/Plugins/Developer/RiderLink/Source/RD/thirdparty/spdlog/include/spdlog/pattern_formatter-inl.h" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/../../../Program Files/UE_4.27/Engine/Plugins/Developer/RiderLink/Source/RD/thirdparty/spdlog/include/spdlog/sinks/dup_filter_sink.h" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/../../../Program Files/UE_4.27/Engine/Plugins/Developer/RiderLink/Source/RD/thirdparty/spdlog/include/spdlog/sinks/systemd_sink.h" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/../../../Program Files/UE_4.27/Engine/Source/ThirdParty/PhysX3/APEX_1.4/include/ApexDefs.h" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/../../../Program Files/UE_4.27/Engine/Source/ThirdParty/PhysX3/PhysX_3.4/Include/PxRigidBody.h" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Source/LinkooPortal/Private/CanEnterPortal.cpp" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Source/LinkooPortal/Private/GameCube.cpp" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Source/LinkooPortal/Private/PortalDoorManager.cpp" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Source/LinkooPortal/Private/PortalHelperComponent.cpp" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Source/LinkooPortal/Public/CanEnterPortal.h" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Source/LinkooPortal/Public/GameCube.h" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Source/LinkooPortal/Public/PortalDoorManager.h" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Source/LinkooPortal/Public/PortalHelperComponent.h" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Source/LinkooPortal/Public/PortalWall.h" root0="FORCE_HIGHLIGHTING" />
   </component>
   <component name="MarkdownSettingsMigration">
     <option name="stateVersion" value="1" />
   </component>
   <component name="ProjectId" id="2CeGgy5Zz4GJzMzEYyKSTgYqYPI" />
-  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true">
+    <ConfirmationsSetting value="2" id="Add" />
+  </component>
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
@@ -376,8 +392,6 @@
       <workItem from="1659243693967" duration="19016000" />
       <workItem from="1659331354548" duration="184000" />
       <workItem from="1659337269630" duration="3374000" />
-      <workItem from="1659356148172" duration="616000" />
-      <workItem from="1659407736721" duration="76000" />
     </task>
     <task id="LOCAL-00001" summary="day 20 组件基本完成，准备做地图和优化">
       <created>1659170001525</created>
@@ -407,14 +421,7 @@
       <option name="project" value="LOCAL" />
       <updated>1659351914481</updated>
     </task>
-    <task id="LOCAL-00005" summary="。。">
-      <created>1659356160675</created>
-      <option name="number" value="00005" />
-      <option name="presentableId" value="LOCAL-00005" />
-      <option name="project" value="LOCAL" />
-      <updated>1659356160675</updated>
-    </task>
-    <option name="localTasksCounter" value="6" />
+    <option name="localTasksCounter" value="5" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -442,7 +449,6 @@
     <MESSAGE value="。。。" />
     <MESSAGE value="day 21" />
     <MESSAGE value="day 22." />
-    <MESSAGE value="。。" />
-    <option name="LAST_COMMIT_MESSAGE" value="。。" />
+    <option name="LAST_COMMIT_MESSAGE" value="day 22." />
   </component>
 </project>
