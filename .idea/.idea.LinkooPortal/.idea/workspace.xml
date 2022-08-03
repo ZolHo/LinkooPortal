@@ -8,18 +8,19 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="0c310649-fdb3-4c81-b55f-cef3cad564d1" name="Changes" comment="day 21 休整">
+    <list default="true" id="0c310649-fdb3-4c81-b55f-cef3cad564d1" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/.idea.LinkooPortal/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.LinkooPortal/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/BluePrint/BP_PortalInstance.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/BluePrint/BP_PortalInstance.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/BluePrint/ButtonSystem/LightLine.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/BluePrint/ButtonSystem/LightLine.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/BluePrint/HUD/UI_HomeMenu.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/BluePrint/HUD/UI_HomeMenu.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/BluePrint/HUD/Widget_LevelButton.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/BluePrint/HUD/Widget_LevelButton.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/BluePrint/ButtonSystem/TriggerDoor.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/BluePrint/ButtonSystem/TriggerDoor.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/BluePrint/Level/FirstPersonExampleMap.umap" beforeDir="false" afterPath="$PROJECT_DIR$/Content/BluePrint/Level/FirstPersonExampleMap.umap" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Content/BluePrint/Level/Level1.umap" beforeDir="false" afterPath="$PROJECT_DIR$/Content/BluePrint/Level/Level1.umap" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Content/BluePrint/Level/Level2.umap" beforeDir="false" afterPath="$PROJECT_DIR$/Content/BluePrint/Level/Level2.umap" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/BluePrint/Level/Level3.umap" beforeDir="false" afterPath="$PROJECT_DIR$/Content/BluePrint/Level/Level3.umap" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Content/BluePrint/Level/Level4.umap" beforeDir="false" afterPath="$PROJECT_DIR$/Content/BluePrint/Level/Level4.umap" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Content/BluePrint/Level/OverviewMap.umap" beforeDir="false" afterPath="$PROJECT_DIR$/Content/BluePrint/Level/OverviewMap.umap" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/BluePrint/PublicActor/ActorGener.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/BluePrint/PublicActor/ActorGener.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/BluePrint/PublicActor/Platform.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/BluePrint/PublicActor/Platform.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/BluePrint/PublicActor/RotatorPlatform.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/BluePrint/PublicActor/RotatorPlatform.uasset" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Content/FirstPersonCPP/Blueprints/FirstPersonCharacter.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/FirstPersonCPP/Blueprints/FirstPersonCharacter.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/LinkooPortal/LinkooPortalCharacter.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/LinkooPortal/LinkooPortalCharacter.cpp" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -390,7 +391,8 @@
       <workItem from="1659243693967" duration="19016000" />
       <workItem from="1659331354548" duration="184000" />
       <workItem from="1659337269630" duration="3374000" />
-      <workItem from="1659495508993" duration="3791000" />
+      <workItem from="1659495508993" duration="4428000" />
+      <workItem from="1659511131998" duration="1130000" />
     </task>
     <task id="LOCAL-00001" summary="day 20 组件基本完成，准备做地图和优化">
       <created>1659170001525</created>
@@ -434,7 +436,14 @@
       <option name="project" value="LOCAL" />
       <updated>1659495745903</updated>
     </task>
-    <option name="localTasksCounter" value="7" />
+    <task id="LOCAL-00007" summary="day 21 完成alpha0.1">
+      <created>1659502130266</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1659502130266</updated>
+    </task>
+    <option name="localTasksCounter" value="8" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -463,6 +472,7 @@
     <MESSAGE value="day 21" />
     <MESSAGE value="day 22." />
     <MESSAGE value="day 21 休整" />
-    <option name="LAST_COMMIT_MESSAGE" value="day 21 休整" />
+    <MESSAGE value="day 21 完成alpha0.1" />
+    <option name="LAST_COMMIT_MESSAGE" value="day 21 完成alpha0.1" />
   </component>
 </project>

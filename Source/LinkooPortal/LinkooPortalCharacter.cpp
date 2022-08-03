@@ -533,7 +533,7 @@ void ALinkooPortalCharacter::RealSwitch(AActor* CopyActor, UPortalHelperComponen
 	}
 	else
 	{
-		LaunchCharacter(FMath::Clamp(Vel, 0.0f ,8000.0f) * NowInDoor->GetActorForwardVector() *1.1f, true, true);
+		LaunchCharacter(FMath::Clamp(Vel, 0.0f ,8000.0f) * NowInDoor->GetActorForwardVector() *1.f, true, true);
 	}
 	
 }
