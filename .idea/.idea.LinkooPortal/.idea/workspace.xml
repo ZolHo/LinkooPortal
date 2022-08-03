@@ -8,12 +8,18 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="0c310649-fdb3-4c81-b55f-cef3cad564d1" name="Changes" comment="">
+    <list default="true" id="0c310649-fdb3-4c81-b55f-cef3cad564d1" name="Changes" comment="day 21 休整">
       <change beforePath="$PROJECT_DIR$/.idea/.idea.LinkooPortal/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.LinkooPortal/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/BluePrint/Level/HomeMenu.umap" beforeDir="false" afterPath="$PROJECT_DIR$/Content/BluePrint/Level/HomeMenu.umap" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/BluePrint/BP_PortalInstance.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/BluePrint/BP_PortalInstance.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/BluePrint/ButtonSystem/LightLine.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/BluePrint/ButtonSystem/LightLine.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/BluePrint/HUD/UI_HomeMenu.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/BluePrint/HUD/UI_HomeMenu.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/BluePrint/HUD/Widget_LevelButton.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/BluePrint/HUD/Widget_LevelButton.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/BluePrint/Level/Level1.umap" beforeDir="false" afterPath="$PROJECT_DIR$/Content/BluePrint/Level/Level1.umap" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Content/BluePrint/Level/Level2.umap" beforeDir="false" afterPath="$PROJECT_DIR$/Content/BluePrint/Level/Level2.umap" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Content/BluePrint/Level/Level3.umap" beforeDir="false" afterPath="$PROJECT_DIR$/Content/BluePrint/Level/Level3.umap" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Content/BluePrint/Level/Level4.umap" beforeDir="false" afterPath="$PROJECT_DIR$/Content/BluePrint/Level/Level4.umap" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/BluePrint/Level/OverviewMap.umap" beforeDir="false" afterPath="$PROJECT_DIR$/Content/BluePrint/Level/OverviewMap.umap" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/FirstPersonCPP/Blueprints/FirstPersonCharacter.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/FirstPersonCPP/Blueprints/FirstPersonCharacter.uasset" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -21,14 +27,6 @@
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
   <component name="HighlightingSettingsPerFile">
-    <setting file="file://$PROJECT_DIR$/../../../Program Files/UE_4.27/Engine/Plugins/Developer/RiderLink/Source/RD/thirdparty/clsocket/src/ActiveSocket.cpp" root0="SKIP_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/../../../Program Files/UE_4.27/Engine/Plugins/Developer/RiderLink/Source/RD/thirdparty/ordered-map/include/tsl/ordered_map.h" root0="SKIP_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/../../../Program Files/UE_4.27/Engine/Plugins/Developer/RiderLink/Source/RD/thirdparty/spdlog/include/spdlog/common-inl.h" root0="SKIP_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/../../../Program Files/UE_4.27/Engine/Plugins/Developer/RiderLink/Source/RD/thirdparty/spdlog/include/spdlog/pattern_formatter-inl.h" root0="SKIP_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/../../../Program Files/UE_4.27/Engine/Plugins/Developer/RiderLink/Source/RD/thirdparty/spdlog/include/spdlog/sinks/dup_filter_sink.h" root0="SKIP_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/../../../Program Files/UE_4.27/Engine/Plugins/Developer/RiderLink/Source/RD/thirdparty/spdlog/include/spdlog/sinks/systemd_sink.h" root0="SKIP_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/../../../Program Files/UE_4.27/Engine/Source/ThirdParty/PhysX3/APEX_1.4/include/ApexDefs.h" root0="SKIP_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/../../../Program Files/UE_4.27/Engine/Source/ThirdParty/PhysX3/PhysX_3.4/Include/PxRigidBody.h" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Source/LinkooPortal/Private/CanEnterPortal.cpp" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Source/LinkooPortal/Private/GameCube.cpp" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Source/LinkooPortal/Private/PortalDoorManager.cpp" root0="FORCE_HIGHLIGHTING" />
@@ -392,6 +390,7 @@
       <workItem from="1659243693967" duration="19016000" />
       <workItem from="1659331354548" duration="184000" />
       <workItem from="1659337269630" duration="3374000" />
+      <workItem from="1659495508993" duration="3791000" />
     </task>
     <task id="LOCAL-00001" summary="day 20 组件基本完成，准备做地图和优化">
       <created>1659170001525</created>
@@ -421,7 +420,21 @@
       <option name="project" value="LOCAL" />
       <updated>1659351914481</updated>
     </task>
-    <option name="localTasksCounter" value="5" />
+    <task id="LOCAL-00005" summary="day 21 休整">
+      <created>1659495575753</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1659495575753</updated>
+    </task>
+    <task id="LOCAL-00006" summary="day 21 休整">
+      <created>1659495745903</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1659495745903</updated>
+    </task>
+    <option name="localTasksCounter" value="7" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -449,6 +462,7 @@
     <MESSAGE value="。。。" />
     <MESSAGE value="day 21" />
     <MESSAGE value="day 22." />
-    <option name="LAST_COMMIT_MESSAGE" value="day 22." />
+    <MESSAGE value="day 21 休整" />
+    <option name="LAST_COMMIT_MESSAGE" value="day 21 休整" />
   </component>
 </project>
