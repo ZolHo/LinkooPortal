@@ -213,6 +213,7 @@ void ALinkooPortalCharacter::TraceAndGrabActor()
     	{
     		// 如果人物想穿墙拿东西，则需要从对面门的摄像机发出穿透门的光线
     		// DoorWhichBetweenHandleActor = Cast<APortalDoor>(HitResult.GetActor());
+    		NowInDoor = Cast<APortalDoor>(HitResult.GetActor());
     		StartLocation = NowInDoor->GetTheOtherPortal()->PortalViewCapture->GetComponentLocation();
     		EndLocation = StartLocation + 300 * NowInDoor->GetTheOtherPortal()->PortalViewCapture->GetForwardVector();
     		FHitResult PortalHitResult;
@@ -359,7 +360,7 @@ void ALinkooPortalCharacter::SetHandleNoCollisionUntilNextFrame()
 	{
 		// MyHandleComponent->GetGrabbedComponent()->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
 		MyHandleComponent->GetGrabbedComponent()->GetOwner()->SetActorEnableCollision(false);
-		GetWorld()->GetTimerManager().SetTimer(SetHandleCollisionTimerHandle, this, &ALinkooPortalCharacter::ExecuteTimer, 0.001f, true);
+		GetWorld()->GetTimerManager().SetTimer(SetHandleCollisionTimerHandle, this, &ALinkooPortalCharacter::ExecuteTimer, 0.010f, true);
 	}
 }
 

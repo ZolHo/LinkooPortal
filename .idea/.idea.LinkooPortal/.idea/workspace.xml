@@ -8,7 +8,16 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="0c310649-fdb3-4c81-b55f-cef3cad564d1" name="Changes" comment="" />
+    <list default="true" id="0c310649-fdb3-4c81-b55f-cef3cad564d1" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/.idea.LinkooPortal/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.LinkooPortal/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/BluePrint/ButtonSystem/LightLine.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/BluePrint/ButtonSystem/LightLine.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/BluePrint/LaserSystem/MagnifierActor.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/BluePrint/LaserSystem/MagnifierActor.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/BluePrint/LaserSystem/RefactCube.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/BluePrint/LaserSystem/RefactCube.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/BluePrint/Level/Level4.umap" beforeDir="false" afterPath="$PROJECT_DIR$/Content/BluePrint/Level/Level4.umap" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/BluePrint/PublicActor/ActorSetter.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/BluePrint/PublicActor/ActorSetter.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/BluePrint/PublicActor/BP_GameCube.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/BluePrint/PublicActor/BP_GameCube.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/LinkooPortal/LinkooPortalCharacter.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/LinkooPortal/LinkooPortalCharacter.cpp" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -382,6 +391,9 @@
       <workItem from="1659495508993" duration="4428000" />
       <workItem from="1659511131998" duration="1933000" />
       <workItem from="1659611111894" duration="88000" />
+      <workItem from="1659612183530" duration="636000" />
+      <workItem from="1659667604733" duration="1047000" />
+      <workItem from="1659668976620" duration="651000" />
     </task>
     <task id="LOCAL-00001" summary="day 20 组件基本完成，准备做地图和优化">
       <created>1659170001525</created>
@@ -446,7 +458,14 @@
       <option name="project" value="LOCAL" />
       <updated>1659611131557</updated>
     </task>
-    <option name="localTasksCounter" value="10" />
+    <task id="LOCAL-00010" summary="little update">
+      <created>1659612192225</created>
+      <option name="number" value="00010" />
+      <option name="presentableId" value="LOCAL-00010" />
+      <option name="project" value="LOCAL" />
+      <updated>1659612192225</updated>
+    </task>
+    <option name="localTasksCounter" value="11" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -478,6 +497,7 @@
     <MESSAGE value="day 21 完成alpha0.1" />
     <MESSAGE value="day 21 alpha0.2" />
     <MESSAGE value="day22 update" />
-    <option name="LAST_COMMIT_MESSAGE" value="day22 update" />
+    <MESSAGE value="little update" />
+    <option name="LAST_COMMIT_MESSAGE" value="little update" />
   </component>
 </project>
